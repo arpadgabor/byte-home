@@ -1,0 +1,23 @@
+{
+  "files.associations": {
+    "freertos.h": "c",
+    "sdkconfig.h": "c",
+    "stdio.h": "c",
+    "gpio.h": "c",
+    "config.h": "c",
+    "nvs_flash.h": "c",
+    "event_groups.h": "c",
+    "esp_event.h": "c",
+    "esp_wifi.h": "c",
+    "esp_system.h": "c",
+    "task.h": "c",
+    "led-service.h": "c"
+  },
+  "taskExplorer.enableMake": true,
+  "task.autoDetect": "on",
+  "search.exclude": {
+    "**/build": true
+  },
+  "editor.tabSize": 4,
+  "cmake.configureOnOpen": true
+}
