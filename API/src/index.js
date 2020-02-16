@@ -8,6 +8,7 @@ const Respond = require('koa-respond')
 const KnexCfg = require('../knexfile')
 const { Model } = require('objection')
 const controllers = require('./controllers')
+require('./services/mqtt')
 
 const app = new Koa()
 
@@ -22,11 +23,10 @@ app.use(Respond())
 controllers(app)
 
 module.exports = async function main() {
-  console.info('Starting server...')
-
+  console.info('NODE: Starting server...\n')
   await knex.raw('SELECT 1+1 AS RESULT')
-  await knex.migrate.latest()
+  console.info('\n SQL: Connected!')
 
   app.listen(process.env.PORT)
-  console.info(`Listening at http://localhost:${process.env.PORT}/api`)
+  console.info(`\nNODE: Listening at http://localhost:${process.env.PORT}/api\n`)
 }
