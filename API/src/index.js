@@ -5,10 +5,11 @@ const Helmet = require('koa-helmet')
 const Logger = require('koa-logger')
 const Static = require('koa-static')
 const Respond = require('koa-respond')
-const KnexCfg = require('../knexfile')
 const { Model } = require('objection')
-const controllers = require('./controllers')
-require('./services/mqtt')
+
+const KnexCfg = require('../knexfile')
+const InitAPI = require('./api')
+const { InitMQTT } = require('./services/mqtt')
 
 const app = new Koa()
 
@@ -20,13 +21,15 @@ app.use(Helmet())
 app.use(BodyParser())
 app.use(Static('static', { hidden: true }))
 app.use(Respond())
-controllers(app)
 
 module.exports = async function main() {
-  console.info('NODE: Starting server...\n')
+  console.info('NODE: Starting server...')
   await knex.raw('SELECT 1+1 AS RESULT')
-  console.info('\n SQL: Connected!')
+  console.info('  DB: Connected!')
+
+  InitAPI(app)
+  InitMQTT()
 
   app.listen(process.env.PORT)
-  console.info(`\nNODE: Listening at http://localhost:${process.env.PORT}/api\n`)
+  console.info(`NODE: Listening at http://localhost:${process.env.PORT}/api`)
 }

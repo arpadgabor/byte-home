@@ -9,6 +9,7 @@
   "author": "Arpad Gabor",
   "license": "ISC",
   "dependencies": {
+    "@hapi/joi": "^17.1.0",
     "@koa/router": "^8.0.8",
     "argon2": "^0.26.0",
     "dotenv": "^8.2.0",

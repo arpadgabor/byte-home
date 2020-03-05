@@ -7,18 +7,6 @@ const errors = require('../middleware/errors')
 
 const baseName = basename(__filename)
 
-/**
- * [koa-respond]
- * ok - HTTP 200
- * created - HTTP 201
- * noContent - HTTP 204 - always sends an empty response!
- * badRequest - HTTP 400
- * unauthorized - HTTP 401
- * forbidden - HTTP 403
- * notFound - HTTP 404
- * internalServerError - HTTP 500
- */
-
 module.exports = (app) => {
   app.use(errors)
   app.use(isAuth)
@@ -36,5 +24,11 @@ module.exports = (app) => {
       router.use(api.routes())
     })
 
+    
   app.use(router.routes()).use(router.allowedMethods())
+  
+  console.log(' API: Loaded routes')
+  router.stack.forEach(route => {
+    console.log('    :', route.path)
+  })
 }
