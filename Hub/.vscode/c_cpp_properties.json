@@ -3,8 +3,6 @@
         {
             "name": "Linux",
             "includePath": [
-                "${env:IDF_PATH}/**",
-                "${env:IDF_PATH}/components/**",
                 "${env:MDF_PATH}/**",
                 "${env:MDF_PATH}/components/**",
                 "${workspaceRoot}/**",
@@ -15,7 +13,7 @@
                 "databaseFilename": ""
             },
             "intelliSenseMode": "gcc-x64",
-            "compilerPath": "~/.espressif/tools/xtensa-esp32-elf/esp-2019r2-8.2.0/xtensa-esp32-elf/bin/xtensa-esp32-elf-gcc",
+            "compilerPath": "/usr/bin/gcc",
             "cStandard": "c11",
             "cppStandard": "c++17",
             "configurationProvider": "vector-of-bool.cmake-tools"
