@@ -3,7 +3,7 @@
 # project subdirectory.
 #
 
-PROJECT_NAME := esp_home
+PROJECT_NAME := mesh
 
 include $(IDF_PATH)/make/project.mk
 

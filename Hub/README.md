@@ -4,14 +4,6 @@
 
 The source code for ByteHome Hubs.
 
-# To do
-
- - [ ] Fix intellisense problems
- - [ ] Clean up Wi-Fi and MQTT
- - [ ] Create Topics and Handlers
- - [ ] MQTT SSL
- - [ ] Unique Device ID
-
 # How to use
 
 *Note: Might migrate to micropython in near future*
