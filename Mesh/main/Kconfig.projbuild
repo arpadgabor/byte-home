@@ -1,0 +1,34 @@
+menu "Byte Configuration"
+
+config ROUTER_SSID
+    string "Router SSID"
+        default "Gabor 2.4GHz"
+        help
+            Router SSID.
+
+config ROUTER_PASSWORD
+    string "Router password"
+        default "gabor456"
+        help
+            Router password.
+
+config MESH_ID
+    string "Mesh ID"
+        default "9723781923"
+        help
+            Mesh network identification, Nodes with the same mesh ID can
+            communicate with each other.
+
+config MESH_PASSWORD
+    string "Mesh Password"
+    default "x812kx0a1"
+    help
+        Mesh AP password. Password length must be 8 bits smaller than 64 bits,Set to null to not encrypt.
+
+config MQTT_URL
+    string "MQTT broker URL"
+    default "mqtt://iot:Uo*r5FA*BcxBdy@95.179.171.154:1883"
+    help
+        URL of the broker to connect to.
+
+endmenu

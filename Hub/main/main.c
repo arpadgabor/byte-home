@@ -97,6 +97,7 @@ void node_write_task(void *arg)
     vTaskDelete(NULL);
 }
 
+// 24:6f:28:96:49:44
 /**
  * @brief Timed printing system information
  */
@@ -114,11 +115,20 @@ static void print_system_info_timercb(void *timer)
     esp_wifi_get_channel(&primary, &second);
     esp_wifi_vnd_mesh_get(&mesh_assoc);
     esp_mesh_get_parent_bssid(&parent_bssid);
-
-    MDF_LOGI("System information, channel: %d, layer: %d, self mac: " MACSTR ", parent bssid: " MACSTR
-             ", parent rssi: %d, node num: %d, free heap: %u", primary,
-             esp_mesh_get_layer(), MAC2STR(sta_mac), MAC2STR(parent_bssid.addr),
-             mesh_assoc.rssi, esp_mesh_get_total_node_num(), esp_get_free_heap_size());
+    // MDF_LOGI("System information, channel: %d, layer: %d, self mac: " MACSTR ", parent bssid: " MACSTR
+    //          ", parent rssi: %d, node num: %d, free heap: %u", primary,
+    //          esp_mesh_get_layer(), MAC2STR(sta_mac), MAC2STR(parent_bssid.addr),
+    //          mesh_assoc.rssi, esp_mesh_get_total_node_num(), esp_get_free_heap_size());
+    
+    printf("======================================\n");
+    MDF_LOGI("System Information:");
+    MDF_LOGI("NODE: %d", esp_mesh_get_total_node_num());
+    MDF_LOGI("CH: %d", primary);
+    MDF_LOGI("LAYER: %u", esp_mesh_get_layer());
+    MDF_LOGI("MAC:" MACSTR, MAC2STR(sta_mac));
+    MDF_LOGI("PARENT: " MACSTR, MAC2STR(parent_bssid.addr));
+    MDF_LOGI("PARENT RSSI: %d", mesh_assoc.rssi);
+    MDF_LOGI("FREE HEAP: %u", esp_get_free_heap_size());
 
     for (int i = 0; i < wifi_sta_list.num; i++) {
         MDF_LOGI("Child mac: " MACSTR, MAC2STR(wifi_sta_list.sta[i].mac));
@@ -220,7 +230,7 @@ void app_main()
      * @brief Data transfer between wifi mesh devices
      */
     if (config.mesh_type == MESH_ROOT) {
-        xTaskCreate(root_task, "root_task", 4 * 1024,
+        xTaskCreate(root_task, "root_task", 8 * 1024,
                     NULL, CONFIG_MDF_TASK_DEFAULT_PRIOTY, NULL);
     } else {
         xTaskCreate(node_write_task, "node_write_task", 4 * 1024,

@@ -8,9 +8,9 @@ The source code for ByteHome Hubs.
 
 *Note: Might migrate to micropython in near future*
 
-1. Get [ESP-IDF](https://docs.espressif.com/projects/esp-idf/en/latest/get-started/index.html)
+1. Get [ESP-IDF](https://docs.espressif.com/projects/esp-idf/en/latest/get-started/index.html) v3.3
 2. Build project `idf.py build`
-3. Flash to device `idf.py flash -p <serial port> -b <baudrate>` (eg. `idf.py flash -p /dev/ttyS4 -b 19200`)
+3. Flash to device `idf.py flash -p <serial port> -b <baudrate>` (eg. `idf.py flash -p /dev/ttyS6 -b 19200` or `115200`)
 4. Monitor logs `idf.py monitor -p <serial port>`
 
 # Devices to use
