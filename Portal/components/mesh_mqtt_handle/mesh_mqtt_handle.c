@@ -14,7 +14,7 @@ enum {
     SUBSCRIBED,
 };
 
-static const char *TAG                   = "ByteMQTT";
+static const char *TAG                   = "MQTT";
 static xQueueHandle g_queue_handle       = NULL;
 static xSemaphoreHandle g_connect_handle = NULL;
 static esp_mqtt_client_handle_t g_client = NULL;

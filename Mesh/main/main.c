@@ -1,9 +1,7 @@
 #include "mdf_common.h"
 #include "mwifi.h"
 #include "mesh_mqtt_handle.h"
-#include "driver/gpio.h"
 #include "sdkconfig.h"
-// #define MEMORY_DEBUG
 
 typedef struct {
     size_t last_num;
@@ -381,6 +379,7 @@ static mdf_err_t event_loop_cb(mdf_event_loop_t event, void *ctx)
 void app_main()
 {
     mwifi_init_config_t cfg   = MWIFI_INIT_CONFIG_DEFAULT();
+
     mwifi_config_t config     = {
         .router_ssid     = CONFIG_ROUTER_SSID,
         .router_password = CONFIG_ROUTER_PASSWORD,

@@ -1,0 +1,22 @@
+{
+  "search.exclude": {
+    "**/build": true
+  },
+  "editor.tabSize": 4,
+  "cmake.configureOnOpen": true,
+  "files.associations": {
+    "mdf_common.h": "c",
+    "sockets.h": "c",
+    "mesh_mqtt_handle.h": "c",
+    "sdkconfig.h": "c",
+    "mesh.h": "c",
+    "freertos.h": "c",
+    "bytemesh.h": "c",
+    "wifi_manager.h": "c",
+    "esp_system.h": "c",
+    "string.h": "c",
+    "stdio.h": "c",
+    "wifimesh.h": "c",
+    "mwifi.h": "c"
+  }
+}

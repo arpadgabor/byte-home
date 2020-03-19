@@ -6,6 +6,8 @@
   "cmake.configureOnOpen": true,
   "files.associations": {
     "mdf_common.h": "c",
-    "sockets.h": "c"
+    "sockets.h": "c",
+    "mesh_mqtt_handle.h": "c",
+    "sdkconfig.h": "c"
   }
 }

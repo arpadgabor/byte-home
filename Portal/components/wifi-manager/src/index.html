@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<script src="./jquery.js"></script>
+		<link rel="stylesheet" href="./style.css">
+		<script src="./code.js"></script>
+		<title>Setup Wi-Fi | ByteDevice</title>
+	</head>
+	<body>
+		<div id="app">
+			<div id="app-wrap">
+				<div id="wifi">
+					<header id="banner" class="bg-primary-dark">
+						<h2>Connect Byte to Wifi</h1>
+					</header>
+					<div id="content-wrapper">
+
+						<div id="wifi-status" class="content card-shadow bg-white mb-2">
+							<h3 class="section-header">Connected to</h3>
+							<section id="connected-to" class="list-item">
+								<div class="ape"><div class="w0"><div class="pw"><span></span></div></div></div>
+							</section>
+						</div>
+
+						<div class="content card-shadow bg-white mb-2">
+							<h3 class="section-header">Select a network</h2>
+							<section id="wifi-list">
+							</section>
+						</div>
+
+						<div class="content card-shadow bg-white">
+							<h3 class="section-header">Manual connect</h2>
+							<section id="manual_add">
+								<div class="ape">Add hidden SSID<div>
+							</section>
+						</div>
+
+					</div>
+				</div>
+
+				<div id="connect_manual" class="sheet-mover">
+					<div class="sheet p-4">
+						<h1 class="sheet-title">Connect to hidden network</h1>
+						<section class="flex flex-col mb-2 w-full">
+							<input type="text" class="input-text mb-2" id="manual_ssid" placeholder="SSID">
+							<input type="password" class="input-text" id="manual_pwd" placeholder="Password">
+						</section>
+						<div class="flex flex-row justify-right w-full">
+							<button class="btn btn-secondary flex-1" id="manual_cancel">Cancel</button>
+							<button class="btn btn-primary shadow-primary flex-1 ml-2" id="manual_join" data-connect="manual">Connect!</button>
+						</div>
+					</div>
+				</div>
+
+				<div id="connect" class="sheet-mover">
+					<div class="sheet p-4">
+						<h1 class="sheet-title">Connect to <span id="ssid-pwd"></span></h1>
+						<input class="input-text w-full mb-2" id="pwd" type="password" placeholder="Password">
+						<div class="flex flex-row justify-right w-full">
+							<button id="cancel" class="btn btn-secondary flex-1">Cancel</button>
+							<button id="join" class="btn btn-primary shadow-primary flex-1 ml-2" type="button">Connect!</button>
+						</div>
+					</div>
+				</div>
+
+				<div id="loading" class="sheet-mover">
+					<div class="sheet p-4">
+						<h1 class="sheet-title">Connecting to <span id="ssid-wait"></span></h1>
+						<div class="spinner"><div class="double-bounce1"></div><div class="double-bounce2"></div></div>
+						<p class="tctr">You may lose Wi-Fi access while the device recalibrates its radio. Please wait until your device automatically reconnects. This can take up to 30s.</p>
+					</div>
+				</div>
+
+				<div id="connect-success" class="sheet-mover">
+					<div class="sheet p-4">
+						<h1 class="sheet-title color-green">Connected!</h1>
+						<div class="flex flex-row w-full">
+							<svg class="mx-auto" version="1.1" x="0px" y="0px" height="64" width="64" viewBox="0 0 468.293 468.293" style="enable-background:new 0 0 468.293 468.293;" xml:space="preserve">
+								<circle style="fill:rgb(14, 180, 55);" cx="234.146" cy="234.146" r="234.146"/>
+								<polygon style="fill:#EBF0F3;" points="357.52,110.145 191.995,275.67 110.773,194.451 69.534,235.684 191.995,358.148   398.759,151.378 "/>
+							</svg>
+						</div>
+						<p class="color-dark">You'll be disconnected. Byte will take on from here!</p>
+						<div class="flex flex-row justify-right w-full">
+							<button id="close-success" class="btn btn-secondary flex-1">Close</button>
+						</div>
+					</div>
+				</div>
+
+				<div id="connect-fail" class="sheet-mover">
+					<div class="sheet p-4">
+							<h3 class="sheet-title color-red">Failed to connect...</h3>
+							<div class="w-full flex flex-row">
+								<svg class="mx-auto" version="1.1" x="0px" y="0px" height="64" width="64" viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve">
+									<ellipse style="fill:rgb(190, 16, 36);" cx="256" cy="256" rx="256" ry="255.832"/>
+									<g transform="matrix(-0.7071 0.7071 -0.7071 -0.7071 77.26 32)">
+										<rect x="3.98" y="-427.615" style="fill:#FFFFFF;" width="55.992" height="285.672"/>
+										<rect x="-110.828" y="-312.815" style="fill:#FFFFFF;" width="285.672" height="55.992"/>
+									</g>
+								</svg>
+							</div>
+							<p class="color-dark">Please double-check wifi password if any and make sure the access point has good signal.</p>
+							<div class="flex flex-row justify-right w-full">
+								<button id="close-fail" class="btn btn-secondary flex-1">Close</button>
+							</div>
+					</div>
+				</div>
+
+				<div id="connect-details" class="sheet-mover">
+					<div id="connect-details-wrap" class="sheet p-4">
+						<h1 class="sheet-title">Connection Details</h1>
+						<section class="flex flex-col">
+							<div class="flex flex-col">
+								<small class="color-gray">IP Adress</small>
+								<p id="ip" class="bold">192.168.0.1</p>
+							</div>
+							<div class="flex flex-col">
+								<small class="color-gray">Subnet Mask</small>
+								<p id="netmask" class="bold">0.0.0.0</p>
+							</div>
+							<div class="flex flex-col">
+								<small class="color-gray">Default Gateway</small>
+								<p id="gw" class="bold">0.0.0.0</p>
+							</div>
+						</section>
+						<div class="flex flex-row">
+							<button class="btn btn-danger flex-1" id="disconnect" type="button">Disconnect</button>
+							<button class="btn btn-secondary flex-1 ml-2" id="ok-details" type="button">Close</button>
+						</div>
+					</div>					
+				</div>
+
+				<div id="diag-disconnect" class="sheet-mover">
+					<div class="sheet p-4">
+						<p>Are you sure you would like to disconnect from this wifi?</p>
+						<div class="flex flex-row">
+							<button id="no-disconnect" class="btn btn-secondary flex-1" type="button">Cancel</button>
+							<button id="yes-disconnect" class="btn btn-danger ml-2 flex-1" type="button">Disconnect</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+<html>
