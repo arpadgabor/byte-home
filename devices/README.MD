@@ -1,19 +1,9 @@
-```c
-***ERROR*** A stack overflow in task Tmr Svc has been detected.
-abort() was called at PC 0x4008a2d8 on core 0
-0x4008a2d8: vApplicationStackOverflowHook at /home/arpad/esp/esp-mdf/esp-idf/components/esp32/panic.c:707
+# Notes
 
+1. Az-Delivery NodeMCU
+    [Docs](https://cdn.shopify.com/s/files/1/1509/1638/files/ESP_-_32_NodeMCU_Developmentboard_Datenblatt_a3bf98d8-6a53-4d26-8f1c-c61b1c82af39.pdf?76837)
+    [Pinout](https://cdn.shopify.com/s/files/1/1509/1638/files/ESP_-_32_NodeMCU_Developmentboard_Pinout_Diagram.jpg?4479111012146266271)
 
-Backtrace: 0x4008a094:0x3ffbd170 0x4008a2c1:0x3ffbd190 0x4008a2d8:0x3ffbd1b0 0x40087808:0x3ffbd1d0 0x40086a40:0x3ffbd1f0 0x400869f2:0xeb86afbb
-0x4008a094: invoke_abort at /home/arpad/esp/esp-mdf/esp-idf/components/esp32/panic.c:707
-
-0x4008a2c1: abort at /home/arpad/esp/esp-mdf/esp-idf/components/esp32/panic.c:707
-
-0x4008a2d8: vApplicationStackOverflowHook at /home/arpad/esp/esp-mdf/esp-idf/components/esp32/panic.c:707
-
-0x40087808: vTaskSwitchContext at /home/arpad/esp/esp-mdf/esp-idf/components/freertos/tasks.c:3507
-
-0x40086a40: _frxt_dispatch at /home/arpad/esp/esp-mdf/esp-idf/components/freertos/portasm.S:406
-
-0x400869f2: _frxt_int_exit at /home/arpad/esp/esp-mdf/esp-idf/components/freertos/portasm.S:206
-```
+2. Lolin D32 Pro
+    [Docs](https://docs.wemos.cc/en/latest/d32/d32_pro.html)
+    [Pinout](https://docs.wemos.cc/en/latest/_static/boards/d32_pro_v2.0.0_3_16x9.jpg)

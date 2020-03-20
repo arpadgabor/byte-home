@@ -20,41 +20,41 @@ int led = 0;
  */
 static void print_system_info_timercb()
 {
-    uint8_t primary                 = 0;
-    wifi_second_chan_t second       = 0;
-    mesh_addr_t parent_bssid        = {0};
-    uint8_t sta_mac[MWIFI_ADDR_LEN] = {0};
-    mesh_assoc_t mesh_assoc         = {0x0};
-    wifi_sta_list_t wifi_sta_list   = {0x0};
+	uint8_t primary                 = 0;
+	wifi_second_chan_t second       = 0;
+	mesh_addr_t parent_bssid        = {0};
+	uint8_t sta_mac[MWIFI_ADDR_LEN] = {0};
+	mesh_assoc_t mesh_assoc         = {0x0};
+	wifi_sta_list_t wifi_sta_list   = {0x0};
 
-    esp_wifi_get_mac(ESP_IF_WIFI_STA, sta_mac);
-    esp_wifi_ap_get_sta_list(&wifi_sta_list);
-    esp_wifi_get_channel(&primary, &second);
-    esp_wifi_vnd_mesh_get(&mesh_assoc);
-    esp_mesh_get_parent_bssid(&parent_bssid);
+	esp_wifi_get_mac(ESP_IF_WIFI_STA, sta_mac);
+	esp_wifi_ap_get_sta_list(&wifi_sta_list);
+	esp_wifi_get_channel(&primary, &second);
+	esp_wifi_vnd_mesh_get(&mesh_assoc);
+	esp_mesh_get_parent_bssid(&parent_bssid);
 
-    MDF_LOGI("System information, channel: %d, layer: %d, self mac: " MACSTR ", parent bssid: " MACSTR
-             ", parent rssi: %d, node num: %d, free heap: %u", primary,
-             esp_mesh_get_layer(), MAC2STR(sta_mac), MAC2STR(parent_bssid.addr),
-             mesh_assoc.rssi, esp_mesh_get_total_node_num(), esp_get_free_heap_size());
+	MDF_LOGI("System information, channel: %d, layer: %d, self mac: " MACSTR ", parent bssid: " MACSTR
+			 ", parent rssi: %d, node num: %d, free heap: %u", primary,
+			 esp_mesh_get_layer(), MAC2STR(sta_mac), MAC2STR(parent_bssid.addr),
+			 mesh_assoc.rssi, esp_mesh_get_total_node_num(), esp_get_free_heap_size());
 
 	if(esp_mesh_is_root()) {
 		MDF_LOGI("THIS IS ROOT");
 	}
 
-    for (int i = 0; i < wifi_sta_list.num; i++) {
-        MDF_LOGI("Child mac: " MACSTR, MAC2STR(wifi_sta_list.sta[i].mac));
-    }
+	for (int i = 0; i < wifi_sta_list.num; i++) {
+		MDF_LOGI("Child mac: " MACSTR, MAC2STR(wifi_sta_list.sta[i].mac));
+	}
 
 #ifdef MEMORY_DEBUG
 
-    if (!heap_caps_check_integrity_all(true)) {
-        MDF_LOGE("At least one heap is corrupt");
-    }
+	if (!heap_caps_check_integrity_all(true)) {
+		MDF_LOGE("At least one heap is corrupt");
+	}
 
-    mdf_mem_print_heap();
-    mdf_mem_print_record();
-    mdf_mem_print_task();
+	mdf_mem_print_heap();
+	mdf_mem_print_record();
+	mdf_mem_print_task();
 #endif /**< MEMORY_DEBUG */
 }
 
@@ -172,76 +172,72 @@ static void node_read_task(void *arg)
 	MDF_FREE(data);
 	vTaskDelete(NULL);
 }
-
-static void node_write_task(void *arg)
+/** @brief
+ * 	Called when there is data to be sent.
+ *  @return
+ *  0 - OK
+ *  1 - Not connected to mesh
+ *  2 - Not connected to root
+ *  3 - Error sending message
+ */
+int node_write_task(char *msg)
 {
 	mdf_err_t ret = MDF_OK;
-	int count     = 0;
 	size_t size   = 0;
 	char *data    = NULL;
 	mwifi_data_type_t data_type     = {0x0};
 	uint8_t sta_mac[MWIFI_ADDR_LEN] = {0};
 
-	MDF_LOGI("NODE WRITE INIT");
-
 	esp_wifi_get_mac(ESP_IF_WIFI_STA, sta_mac);
 
-	for (;;) {
-		if(mwifi_is_connected())
-			ESP_LOGI(TAG, "MWIFI CONN");
-		else ESP_LOGW(TAG, "MWIFI NOT CONN");
+	if(!mwifi_is_connected())
+		return 1;
 
-		if(mwifi_get_root_status())
-			ESP_LOGI(TAG, "HAS ROOT");
-		else ESP_LOGW(TAG, "NO ROOT");
-		
-		if (!mwifi_is_connected() || !mwifi_get_root_status()) {
-			ESP_LOGW(TAG, "Not sending data [NW]");
-			vTaskDelay(500 / portTICK_RATE_MS);
-			continue;
-		}
+	if(!mwifi_get_root_status())
+		return 2;
 
-		/**
-		 * @brief Send device information to mqtt server throught root node.
-		 */
-		size = asprintf(&data, "{\"mac\": \"%02x%02x%02x%02x%02x%02x\", \"seq\":%d,\"layer\":%d\"msg\": \"Sorry losers and haters, but my IQ is one of the highest any you all know it! -Donald Trump\"}",
-						MAC2STR(sta_mac), count++, esp_mesh_get_layer());
+	size = asprintf(&data, "\
+		{\
+			\"mac\": \"%02x%02x%02x%02x%02x%02x\",\
+			\"layer\": %d,\
+			\"msg\": %s\
+		}",
+		MAC2STR(sta_mac), esp_mesh_get_layer(), msg);
 
-		MDF_LOGD("Node send, size: %d, data: %s", size, data);
-		ret = mwifi_write(NULL, &data_type, data, size, true);
-		MDF_FREE(data);
-		MDF_ERROR_CONTINUE(ret != MDF_OK, "<%s> mwifi_write", mdf_err_to_name(ret));
+	MDF_LOGD("Node send, size: %d, data: %s", size, data);
+	ret = mwifi_write(NULL, &data_type, data, size, true);
+	MDF_FREE(data);
 
-		vTaskDelay(3000 / portTICK_RATE_MS);
+	if(ret != MDF_OK) {
+		return 3;
 	}
-
-	MDF_LOGW("NODE WRITE EXIT");
-	vTaskDelete(NULL);
+	// if no errors
+	return 0;
 }
 
 static mdf_err_t wifi_init()
 {
-    mdf_err_t ret          = nvs_flash_init();
-    wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
+	mdf_err_t ret          = nvs_flash_init();
+	wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
 
-    if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
-        MDF_ERROR_ASSERT(nvs_flash_erase());
-        ret = nvs_flash_init();
-    }
+	if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
+		MDF_ERROR_ASSERT(nvs_flash_erase());
+		ret = nvs_flash_init();
+	}
 
-    MDF_ERROR_ASSERT(ret);
+	MDF_ERROR_ASSERT(ret);
 
-    tcpip_adapter_init();
-    MDF_ERROR_ASSERT(esp_wifi_init(&cfg));
-    MDF_ERROR_ASSERT(esp_wifi_set_storage(WIFI_STORAGE_FLASH));
-    MDF_ERROR_ASSERT(esp_wifi_set_mode(WIFI_MODE_STA));
-    MDF_ERROR_ASSERT(esp_wifi_set_ps(WIFI_PS_NONE));
-    MDF_ERROR_ASSERT(esp_mesh_set_6m_rate(false));
+	tcpip_adapter_init();
+	MDF_ERROR_ASSERT(esp_wifi_init(&cfg));
+	MDF_ERROR_ASSERT(esp_wifi_set_storage(WIFI_STORAGE_FLASH));
+	MDF_ERROR_ASSERT(esp_wifi_set_mode(WIFI_MODE_STA));
+	MDF_ERROR_ASSERT(esp_wifi_set_ps(WIFI_PS_NONE));
+	MDF_ERROR_ASSERT(esp_mesh_set_6m_rate(false));
 	ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_STA, wifi_manager_get_wifi_sta_config()));
-    MDF_ERROR_ASSERT(esp_wifi_start());
+	MDF_ERROR_ASSERT(esp_wifi_start());
 
 	ESP_LOGI(TAG, "WIFI 2 CONNECTED");
-    return MDF_OK;
+	return MDF_OK;
 
 }
 
@@ -401,6 +397,8 @@ void initMesh()
 
 	strcpy((char*)config.router_ssid, ssid);
 	strcpy((char*)config.router_password, password);
+	// strcpy((char*)config.router_ssid, "ssid");
+	// strcpy((char*)config.router_password, "password");
 
 	printf("ssid: %s, password: %s, meshid: %s, meshpw: %s",
 			config.router_ssid, config.router_password, 
@@ -417,16 +415,16 @@ void initMesh()
 	 */
 	ESP_ERROR_CHECK(esp_event_loop_init(NULL, NULL));
 	MDF_ERROR_ASSERT(mdf_event_loop_init(event_loop_cb));
-    MDF_ERROR_ASSERT(wifi_init());
-    MDF_ERROR_ASSERT(mwifi_init(&cfg));
-    MDF_ERROR_ASSERT(mwifi_set_config(&config));
-    MDF_ERROR_ASSERT(mwifi_start());
+	MDF_ERROR_ASSERT(wifi_init());
+	MDF_ERROR_ASSERT(mwifi_init(&cfg));
+	MDF_ERROR_ASSERT(mwifi_set_config(&config));
+	MDF_ERROR_ASSERT(mwifi_start());
 
 	/**
 	 * @brief Create node handler
 	 */
-	xTaskCreate(node_write_task, "node_write_task", 4 * 1024,
-				NULL, CONFIG_MDF_TASK_DEFAULT_PRIOTY, NULL);
+	// xTaskCreate(node_write_task, "node_write_task", 4 * 1024,
+	// 			NULL, CONFIG_MDF_TASK_DEFAULT_PRIOTY, NULL);
 	xTaskCreate(node_read_task, "node_read_task", 4 * 1024,
 				NULL, CONFIG_MDF_TASK_DEFAULT_PRIOTY, NULL);
 

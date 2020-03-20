@@ -43,7 +43,7 @@ static mdf_err_t mqtt_update_subdev(uint8_t type, uint8_t *subdev_list, size_t s
         mlink_json_pack(&addr_list, "[]", mlink_mac_hex2str(subdev_list + i * MWIFI_ADDR_LEN, mac_str));
 
         /* subscribe topic: /topic/subdev/mac/recv eg: /topic/subdev/240ac4085480/recv*/
-        asprintf(&topic_str, "/topic/subdev/%s/recv", mac_str);
+        asprintf(&topic_str, "device/%s/recv", mac_str);
 
         if (type == SUBSCRIBED) {
             MDF_LOGI("subscribe: %s", topic_str);
@@ -63,7 +63,7 @@ static mdf_err_t mqtt_update_subdev(uint8_t type, uint8_t *subdev_list, size_t s
 
     MDF_LOGD("size: %d, data: %s", strlen(data), data);
 
-    asprintf(&topic_str, "/topic/gateway/%s/update", mac_str);
+    asprintf(&topic_str, "gateway/%s/update", mac_str);
     esp_mqtt_client_publish(g_client, topic_str, data, 0, 1, 0);
     MDF_FREE(topic_str);
 
@@ -91,8 +91,8 @@ mdf_err_t mesh_mqtt_write(uint8_t *addr, void *data, size_t size)
 
     char *topic_str  = NULL;
 
-    /* publish data topic: /topic/subdev/mac/send eg: /topic/subdev/240ac4085480/send*/
-    asprintf(&topic_str, "/topic/subdev/%02x%02x%02x%02x%02x%02x/send", MAC2STR(addr));
+    /* publish data topic: /topic/subdev/mac/send eg: /topic/subdev/240ac4085480/send */
+    asprintf(&topic_str, "device/%02x%02x%02x%02x%02x%02x/send", MAC2STR(addr));
     esp_mqtt_client_publish(g_client, topic_str, data, size, 0, 0);
     MDF_FREE(topic_str);
 

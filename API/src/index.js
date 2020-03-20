@@ -9,7 +9,7 @@ const { Model } = require('objection')
 
 const KnexCfg = require('../knexfile')
 const InitAPI = require('./api')
-const { InitMQTT } = require('./services/mqtt')
+const { InitMQTT } = require('./libs/mqtt')
 
 const app = new Koa()
 
