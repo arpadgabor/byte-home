@@ -11,7 +11,7 @@ module.exports = (app) => {
   app.use(errors)
   app.use(isAuth)
 
-  const router = new Router({ prefix: `/api` })
+  const router = new Router({ prefix: '/api' })
 
   router.get('/', ctx => {
     ctx.ok('hello')

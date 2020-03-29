@@ -6,7 +6,6 @@ const { validate } = require('../middleware/validations')
 const { OK, CREATED } = require('../utils/statusCodes')
 const Users = require('../services/users')
 
-
 const route = new Router({ prefix: '/auth' })
   
 route.post('/login', ifPublic, async (ctx) => {

@@ -1,26 +1,29 @@
 const { Model } = require('objection')
-const Users = require('./users')
-const Things = require('./things')
 
 module.exports = class Devices extends Model {
   static tableName = 'devices'
 
-  static relationMappings = () => ({
-    owner: {
-      relation: Model.BelongsToOneRelation,
-      modelClass: Users,
-      join: {
-        from: 'devices.owner',
-        to: 'users.id'
-      }
-    },
-    things: {
-      relation: Model.HasManyRelation,
-      modelClass: Things,
-      join: {
-        from: 'devices.id',
-        to: 'things.device'
+  static get relationMappings() {
+    const Households = require('./households')
+    const Sensors = require('./sensors')
+
+    return {
+      household: {
+        relation: Model.BelongsToOneRelation,
+        modelClass: Households,
+        join: {
+          from: 'devices.household',
+          to: 'households.id'
+        }
+      },
+      sensors: {
+        relation: Model.HasManyRelation,
+        modelClass: Sensors,
+        join: {
+          from: 'devices.id',
+          to: 'sensors.device'
+        }
       }
     }
-  })
+  }
 }

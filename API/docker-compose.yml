@@ -1,0 +1,27 @@
+version: '3'
+
+services:
+
+  byteapi:
+    image: byteapi
+    container_name: byteapi
+    depends_on:
+      - timescaledb
+    restart: always
+    networks:
+      - proxy
+      - db
+    environment:
+      
+    expose:
+      - "8080"
+    labels:
+      - "traefik.enable=true"
+      # to complete
+
+
+networks:
+  proxy:
+    external: true
+  db:
+    external: true
