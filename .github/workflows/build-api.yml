@@ -2,9 +2,10 @@ name: 'Build API'
 on:
   push:
     branches:
-      - 'master'
+      - master
     paths:
       - 'api/**'
+      - '.github/**'
 
 jobs:
   build:
