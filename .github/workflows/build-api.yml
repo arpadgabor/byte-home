@@ -22,8 +22,10 @@ jobs:
           REGISTRY: docker.pkg.github.com
           USER: arpadgabor
 
-      - name: Build image
+      - name: Debug
         run: pwd && ls -la
+
+      - name: Build image
         run: docker build . -t "$REGISTRY/$IMAGE:$GITHUB_SHA" --file $FOLDER_PATH/Dockerfile
         env:
           FOLDER_PATH: api
