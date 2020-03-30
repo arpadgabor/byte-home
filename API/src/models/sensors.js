@@ -9,7 +9,7 @@ module.exports = class Sensors extends Model {
     
     return {
 
-      device: {
+      ofdevice: {
         relation: Model.BelongsToOneRelation,
         modelClass: Device,
         join: {

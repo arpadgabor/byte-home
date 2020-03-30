@@ -1,33 +1,42 @@
-const { Devices, Sensors } = require('../../models')
-const { sendUUID } = require('./publishers')
+const { Devices, Sensors, Readings } = require('../../models')
 
-const onPing = payload => {
+const onPing = (payload, mqtt) => {
   console.log(payload)
 }
 
-const onBoot = async payload => {
+// TODO Move method soon TM
+const registerDevice = async (payload, mqtt) => {
   const deviceMac = payload.mac
-  const deviceQuery = await Devices.query().where('mac', deviceMac).first()
-
+  const deviceQuery = await Devices.query().withGraphFetched('sensors').where('mac', deviceMac).first()
+  
   if(!deviceQuery) {
-    const sensors = payload.mac.msg
+    const sensors = payload.msg.sensors
     await Devices.query().insertGraph({
       mac: deviceMac,
       sensors: sensors
     })
+  } else if(deviceQuery.sensors.length === 0) {
+    const sensors = payload.msg.sensors
+    await Devices.relatedQuery('sensors').for(deviceQuery.id).insert(sensors)
   }
 
-  sendUUID(deviceMac, deviceQuery.id)
+  mqtt.publish(`device/${deviceMac}/recv`, `uuid:${deviceQuery.id}\0`)
 }
 
-const onReading = async payload => {
-  for(let sensor of payload.msg.data) {
+const onReading = async (payload, mqtt) => {
+  console.log(payload)
+  if(payload.uuid === '') {
+    registerDevice(payload, mqtt)
+    return
+  }
+
+  const deviceSensors = await Sensors.query().where('device', payload.uuid).select('id', 'type')
+
+  for(let sensor of deviceSensors) {
     try {
-      await Sensors.query().insert({
-        mac: payload.mac,
-        name: sensor.name,
-        data: sensor.value,
-        unit: sensor.unit
+      await Readings.query().insert({
+        value: payload.msg.sensors[sensor.type],
+        sensor: sensor.id
       })
     } catch (e) {
       console.log(e)
@@ -35,13 +44,12 @@ const onReading = async payload => {
   }
 }
 
-const gateway = payload => {
+const gateway = (payload, mqtt) => {
   console.log(payload)
 }
 
 module.exports = {
   'ping': onPing,
-  'device/+/send/reading': onReading,
-  'device/+/send/boot': onBoot,
+  'device/+/send': onReading,
   'gateway/#': gateway
 }

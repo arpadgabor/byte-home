@@ -1,13 +1,13 @@
-const { mqtt } = require('./index')
+const { mqtt } = require('../mqtt')
 
 const sendUUID = (mac, uuid) => {
   const parsedmac = mac.split(':').join('')
-  mqtt.publish(`device/${parsedmac}/recv/uuid`, uuid)
+  mqtt.publish(`device/${parsedmac}/recv`, `uuid:${uuid}`)
 }
 
 const sendCommand = (mac, command) => {
   const parsedmac = mac.split(':').join('')
-  mqtt.publish(`device/${parsedmac}/recv/cmd`, command)
+  mqtt.publish(`device/${parsedmac}/recv`, `cmd:${command}`)
 }
 
 module.exports = {

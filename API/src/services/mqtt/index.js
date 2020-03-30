@@ -14,6 +14,7 @@ mqtt.on('disconnect', () => {
 
 mqtt.on('message', (topic, payload) => {
   console.log('MQTT: Recieved', topic)
+  console.log(payload)
   let matched = ''
 
   // Find matched topic
@@ -25,8 +26,12 @@ mqtt.on('message', (topic, payload) => {
     }
   }
 
-  const jsonPayload = JSON.parse(payload.toString());
-  topics[matched](jsonPayload);
+  try {
+    const jsonPayload = JSON.parse(payload.toString());
+    topics[matched](jsonPayload, mqtt);
+  } catch(e) {
+    console.log(e)
+  }
 })
 
 module.exports = {
@@ -39,6 +44,5 @@ module.exports = {
           console.info(`MQTT: Subscribed to [${done[0].topic}]`)
       })
     }
-  },
-  mqtt: mqtt
+  }
 }

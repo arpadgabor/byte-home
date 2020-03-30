@@ -75,7 +75,7 @@ config MESH_PASSWORD
 
 config MQTT_URL
 	string "MQTT broker URL"
-		default "mqtt://iot:Uo*r5FA*BcxBdy@95.179.171.154:1883"
+		default "mqtt://95.179.171.154:1883"
 		help
 			URL of the broker to connect to.
 

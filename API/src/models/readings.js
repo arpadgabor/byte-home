@@ -7,7 +7,7 @@ module.exports = class Readings extends Model {
   static get relationMappings() {
     const Sensors = require('./sensors')
     return {
-      sensor: {
+      ofsensor: {
         relation: Model.BelongsToOneRelation,
         modelClass: Sensors,
         join: {

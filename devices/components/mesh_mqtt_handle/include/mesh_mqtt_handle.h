@@ -46,7 +46,8 @@ mdf_err_t mesh_mqtt_unsubscribe(uint8_t *subdev_list, size_t subdev_num);
  * @param  addr node address
  * @param  data pointer of data
  * @param  size length of data
- *
+ * @param  subtopic char
+ * 
  * @return
  *     - MDF_OK
  *     - MDF_FAIL

@@ -8,7 +8,7 @@ const { NOT_FOUND } = require('../utils/statusCodes')
 const route = new Router({ prefix: '/users' })
 
 route.get('/me', ifUser, async (ctx) => {
-  const user = await Users.query().withGraphFetched('[person, households.[devices]]').first()
+  const user = await Users.query().withGraphFetched('[person, households.[devices]]').where('id', ctx.user.id).first()
 
   delete user.password
   delete user.verified

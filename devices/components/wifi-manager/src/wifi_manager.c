@@ -260,11 +260,9 @@ bool wifi_manager_fetch_wifi_sta_config(){
 	else { return false; }
 }
 
-
 void wifi_manager_clear_ip_info_json(){
 	strcpy(ip_info_json, "{}\n");
 }
-
 
 void wifi_manager_generate_ip_info_json(update_reason_code_t update_reason_code){
 
@@ -304,8 +302,6 @@ void wifi_manager_generate_ip_info_json(update_reason_code_t update_reason_code)
 	else{
 		wifi_manager_clear_ip_info_json();
 	}
-
-
 }
 
 void wifi_manager_clear_access_points_json(){
