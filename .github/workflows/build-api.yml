@@ -23,6 +23,7 @@ jobs:
           USER: arpadgabor
 
       - name: Build image
+        run: pwd && ls -la
         run: docker build . -t "$REGISTRY/$IMAGE:$GITHUB_SHA" --file $FOLDER_PATH/Dockerfile
         env:
           FOLDER_PATH: api
