@@ -1,24 +1,41 @@
 version: '3'
 
 services:
-
-  byteapi:
-    image: byteapi
-    container_name: byteapi
-    depends_on:
-      - timescaledb
+  byteapi_dev:
+    image: docker.pkg.github.com/arpadgabor/bytehome/api:407d80f06b86637776ecdca8f3b427ddf8576b41
+    container_name: byteapi_dev
     restart: always
     networks:
       - proxy
       - db
     environment:
-      
-    expose:
-      - "8080"
+      PORT: 3000
+      JWT_SECRET: sadhuhpdbjsnc390sadknm_x0913-poqlsmxzmaX
+      MQTT_URI: mqtt://78.47.106.140:1883/
+      CONNECTION_URL: postgres://postgres:7W8oVwRXxTm7VPjETrXZ2yuGyPbci2@timescaledb/bytedev
     labels:
       - "traefik.enable=true"
-      # to complete
-
+      - "traefik.http.routers.byteapi_dev.entrypoints=http"
+      - "traefik.http.routers.byteapi_dev.rule=Host(`dev.api.byte.arpadgabor.com`)"
+      - "traefik.http.routers.byteapi_dev.middlewares=https-redirect@file"
+      - "traefik.http.routers.byteapi_dev-secure.entrypoints=https"
+      - "traefik.http.routers.byteapi_dev-secure.rule=Host(`dev.api.byte.arpadgabor.com`)"
+      - "traefik.http.routers.byteapi_dev-secure.tls=true"
+      - "traefik.http.routers.byteapi_dev-secure.tls.certresolver=http"
+      - "traefik.http.routers.byteapi_dev-secure.service=byteapi_dev"
+      - "traefik.http.services.byteapi_dev.loadbalancer.server.port=2368"
+      - "traefik.docker.network=proxy"
+      - "traefik.http.middlewares.securedheaders.headers.forcestsheader=true"
+      - "traefik.http.middlewares.securedheaders.headers.sslRedirect=true"
+      - "traefik.http.middlewares.securedheaders.headers.STSPreload=true"
+      - "traefik.http.middlewares.securedheaders.headers.ContentTypeNosniff=true"
+      - "traefik.http.middlewares.securedheaders.headers.BrowserXssFilter=true"
+      - "traefik.http.middlewares.securedheaders.headers.STSIncludeSubdomains=true"
+      - "traefik.http.middlewares.securedheaders.headers.stsSeconds=63072000"
+      - "traefik.http.middlewares.securedheaders.headers.frameDeny=true"
+      - "traefik.http.middlewares.securedheaders.headers.browserXssFilter=true"
+      - "traefik.http.middlewares.securedheaders.headers.contentTypeNosniff=true"
+      - "traefik.http.middlewares.securedheaders.headers.customresponseheaders.X-Powered-By=\"\""
 
 networks:
   proxy:
