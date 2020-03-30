@@ -28,7 +28,7 @@ jobs:
       - name: Build image
         run: docker build . -t "$REGISTRY/$IMAGE:$GITHUB_SHA" --file $FOLDER_PATH/Dockerfile
         env:
-          FOLDER_PATH: api
+          FOLDER_PATH: API
           REGISTRY: docker.pkg.github.com
           IMAGE:  arpadgabor/bytehome/api
 

@@ -1,7 +1,7 @@
 FROM node:12.15-alpine as build
 
 WORKDIR /app
-COPY api/ ./
+COPY API/ ./
 
 RUN echo "unsafe-perm = true" >> ~/.npmrc
 
