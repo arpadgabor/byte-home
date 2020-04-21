@@ -4,9 +4,9 @@ module.exports = class Users extends Model {
   static tableName = 'users'
 
   static get relationMappings() {
-    const Households = require('./households')
-    const Roles = require('./roles')
-    const People = require('./people')
+    const Households = require('../households/model')
+    const { Roles } = require('../auth/models')
+    const People = require('../people/model')
     
     return {
         person: {

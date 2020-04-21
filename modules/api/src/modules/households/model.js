@@ -4,8 +4,8 @@ module.exports = class Households extends Model {
   static tableName = 'households'
 
   static get relationMappings() {
-    const Users = require('./users')
-    const Devices = require('./devices')
+    const Users = require('../users/model')
+    const Devices = require('../devices/model')
     return {
       devices: {
         relation: Model.HasManyRelation,

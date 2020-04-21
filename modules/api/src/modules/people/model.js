@@ -5,7 +5,7 @@ module.exports = class People extends Model {
   static tableName = 'people'
   
   static get relationMappings() {
-    const Users = require('./users')
+    const Users = require('../users/model')
     
     return {
       users: {

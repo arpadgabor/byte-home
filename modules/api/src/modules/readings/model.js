@@ -1,11 +1,10 @@
 const { Model } = require('objection')
 
-
 module.exports = class Readings extends Model {
   static tableName = 'readings'
   
   static get relationMappings() {
-    const Sensors = require('./sensors')
+    const Sensors = require('../sensors/model')
     return {
       ofsensor: {
         relation: Model.BelongsToOneRelation,

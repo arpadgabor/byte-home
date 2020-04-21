@@ -4,8 +4,8 @@ module.exports = class Devices extends Model {
   static tableName = 'devices'
 
   static get relationMappings() {
-    const Households = require('./households')
-    const Sensors = require('./sensors')
+    const Households = require('../households/model')
+    const Sensors = require('../sensors/model')
 
     return {
       household: {

@@ -1,11 +1,14 @@
 const { Model } = require('objection')
 
+class TokenWhitelist extends Model {
+  static tableName = 'tokenWhitelist'
+}
 
-module.exports = class Roles extends Model {
+class Roles extends Model {
   static tableName = 'roles'
   
   static get relationMappings() {
-    const Users = require('./users')
+    const Users = require('../users/model')
     return {
       user: {
         relation: Model.ManyToManyRelation,
@@ -21,4 +24,8 @@ module.exports = class Roles extends Model {
       }
     }
   }
+}
+
+module.exports = {
+  TokenWhitelist, Roles
 }
