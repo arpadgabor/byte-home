@@ -8,9 +8,9 @@ module.exports = {
     max: 10
   },
   migrations: {
-    directory: './src/migrations'
+    directory: './src/db/migrations'
   },
   seeds: {
-    directory: './src/seeds'
+    directory: './src/db/seeds'
   }
 }

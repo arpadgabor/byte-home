@@ -4,7 +4,8 @@
   "description": "Api for ByteHome",
   "main": "dist/index.js",
   "scripts": {
-    "start": "npx nodemon index.js"
+    "start": "nodemon src/index.js",
+    "knex": "knex"
   },
   "author": "Arpad Gabor",
   "license": "ISC",
@@ -22,8 +23,6 @@
     "koa-respond": "^2.1.0",
     "koa-static": "^5.0.0",
     "mqtt": "^3.0.0",
-    "mysql2": "^2.1.0",
-    "node-ts": "^5.0.3",
     "objection": "^2.1.2",
     "pg": "^7.18.2"
   },

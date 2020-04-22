@@ -23,12 +23,4 @@ module.exports = (app) => {
       const api = require(join(__dirname, file))
       router.use(api.routes())
     })
-
-    
-  app.use(router.routes()).use(router.allowedMethods())
-  
-  console.log(' API: Loaded routes')
-  router.stack.forEach(route => {
-    console.log('    :', route.path)
-  })
 }
