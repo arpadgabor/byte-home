@@ -1,21 +1,22 @@
-const { OK, CREATED } = require('../utils/statusCodes')
-const Users = require('../services/users')
+const { OK, CREATED } = require('../../utils/statusCodes')
+const AuthService = require('./services')
 
-  
 exports.login = async (ctx) => {
-  const user = await Users.logIn(ctx.request.body)
-
-  const token = signToken({ id: user.id })
-
-  ctx.cookies.set('token', token)
-  return ctx.ok('Authorized.')
+  const { user, accessToken, refreshToken } = await AuthService.authenticate(ctx.request.body)
+  const { browser, source, platform } = ctx.userAgent
+  
+  await AuthService.whitelistToken(user.id, refreshToken, { browser: browser, platform: platform, source: source })
+  
+  ctx.cookies.set('refresh', refreshToken, { signed: true })
+  ctx.cookies.set('access', accessToken, { signed: true })
+  
+  return ctx.send(OK, { user: user })
 }
 
 exports.register = async (ctx) => {
-  const user = await Users.signUp(ctx.request.body)
-
-  ctx.status = CREATED
-  return ctx.body = { message: 'User registered.', email: user.email }
+  const user = await AuthService.register(ctx.request.body)
+  
+  ctx.send(CREATED, { user: user })
 }
 
 exports.forgot = async (ctx) => {
@@ -23,8 +24,8 @@ exports.forgot = async (ctx) => {
 }
 
 exports.logout = async ctx => {
-  ctx.cookies.set('token')
+  ctx.cookies.set('refresh')
+  ctx.cookies.set('access')
+  // TODO: Delete refresh from whitelist
   return ctx.ok('Logged out.')
 }
-
-module.exports = route

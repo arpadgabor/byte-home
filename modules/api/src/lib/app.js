@@ -4,19 +4,24 @@ const BodyParser = require('koa-bodyparser')
 const Helmet = require('koa-helmet')
 const Logger = require('koa-logger')
 const Respond = require('koa-respond')
+const UserAgent = require('koa2-useragent')
 
 const ErrorHandlers = require('./errors')
-const { routes, allowedMethods } = require('./router')
+const Api = require('./router')
 
 const app = new Koa()
 
+app.keys = ['this is a secret', 'i like turtle secrets xoxo']
+
 app.use(ErrorHandlers)
+app.use(UserAgent())
 app.use(Logger())
 app.use(Helmet())
 app.use(BodyParser())
 app.use(Respond())
 
-app.use(routes())
-app.use(allowedMethods())
+
+app.use(Api.routes())
+app.use(Api.allowedMethods())
 
 module.exports = app

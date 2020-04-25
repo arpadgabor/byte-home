@@ -1,8 +1,8 @@
-require('dotenv').config()
+const config = require('./config')
 
 module.exports = {
   client: 'pg',
-  connection: process.env.CONNECTION_URL,
+  connection: config.get('dbUrl'),
   pool: {
     min: 2,
     max: 10

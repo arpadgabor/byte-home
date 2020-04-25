@@ -1,4 +1,6 @@
-const { Devices, Sensors, Readings } = require('../../models')
+const Devices = require('../../modules/devices/model')
+const Sensors = require('../../modules/sensors/model')
+const Readings = require('../../modules/readings/model')
 
 const onPing = (payload, mqtt) => {
   console.log(payload)

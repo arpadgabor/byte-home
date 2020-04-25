@@ -1,36 +1,64 @@
-const Argon = require('argon2')
-const Users = require('../users/model')
+const jwt = require('jsonwebtoken')
+const config = require('../../../config')
+const Code = require('../../utils/statusCodes')
+const UserService = require('../users/services')
+const { hash, verify, argon2id } = require('argon2')
+const { TokenWhitelist, Roles } = require('./models')
 const { HttpError } = require('../../utils/errors')
-const { INTERNAL_SERVER_ERROR, CONFLICT, FORBIDDEN } = require('../../utils/statusCodes')
 
-// TODO: Email verification
-exports.signUp = async user => {
-  const query = Users.query()
+const register = async ({ email, password }) => {
+  const hashed = hash(password, { type: argon2id })
 
-  if(await query.select().where({ email: user.email }).first())
-    throw new HttpError('Email is already in use.', CONFLICT)
+  const user = await UserService.create({ email: email, password: password })
   
-  try {
-    const hash = await Argon.hash(user.password, { type: Argon.argon2id })
-    const created = await query.insert({
-      email: user.email,
-      password: hash
-    })
+}
 
-    return created
-  } catch (e) {
-    throw new HttpError(e.message, INTERNAL_SERVER_ERROR)
+const authenticate = async ({ email, password }) => {
+  let user = await UserService.findByEmail(email, 'roles')
+
+  user.roles = user.roles.map(role => role.name)
+  const match = await verify(user.password, password, { type: argon2id })
+
+  if(match) {
+    return {
+      user: {
+        id: user.id,
+        email: user.email,
+        roles: user.roles,
+        verified: user.verified
+      },
+      ...await generateTokenPair(user)
+    }
+  } else {
+    throw HttpError('Password or email do not match', Code.BAD_REQUEST)
   }
 }
 
-exports.logIn = async user => {
-  const query = Users.query()
-  const userSearch = await query.select('id', 'email', 'password', 'verified').where({ email: user.email }).first()
-  
-  if(!(user && await Argon.verify(userSearch.password, user.password)))
-    throw new HttpError('Email or password is incorrect.', FORBIDDEN)
-  
-  return userSearch
+const generateTokenPair = async ({ id, roles }) => {
+  const payload = {
+    sub: id,
+    scope: roles
+  }
+
+  const accessToken = jwt.sign(payload, config.get('jwtSecret'), { expiresIn: 60 })
+  const refreshToken = jwt.sign(payload, config.get('refreshSecret'), { expiresIn: '7d' })
+
+  return {
+    accessToken,
+    refreshToken
+  }
 }
 
-exports.delete = user => {}
+const whitelistToken = async (userid, token, userAgent) => {
+  return await TokenWhitelist.query().insert({
+    token: token,
+    userAgent: userAgent,
+    user: userid,
+  })
+}
+
+module.exports = {
+  register,
+  authenticate,
+  whitelistToken
+}

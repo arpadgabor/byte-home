@@ -1,7 +1,7 @@
 const { Model } = require('objection')
 
 class TokenWhitelist extends Model {
-  static tableName = 'tokenWhitelist'
+  static tableName = 'token_whitelist'
 }
 
 class Roles extends Model {

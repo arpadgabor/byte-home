@@ -5,7 +5,7 @@ module.exports = class Users extends Model {
 
   static get relationMappings() {
     const Households = require('../households/model')
-    const { Roles } = require('../auth/models')
+    const { Roles, TokenWhitelist } = require('../auth/models')
     const People = require('../people/model')
     
     return {
@@ -29,7 +29,7 @@ module.exports = class Users extends Model {
             to: 'households.id'
           }
         },
-        role: {
+        roles: {
           relation: Model.ManyToManyRelation,
           modelClass: Roles,
           join: {
@@ -39,6 +39,14 @@ module.exports = class Users extends Model {
               to: 'user_roles.role'
             },
             to: 'roles.id'
+          }
+        },
+        tokens: {
+          relation: Model.HasManyRelation,
+          modelClass: TokenWhitelist,
+          join: {
+            from: 'token_whitelist.user',
+            to: 'users.id'
           }
         }
       }

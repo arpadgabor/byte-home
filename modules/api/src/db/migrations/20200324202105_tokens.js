@@ -3,7 +3,9 @@ exports.up = function(knex) {
   return knex.schema
   .createTable('token_whitelist', $ => {
     $.increments('id')
-    $.string('hashedToken')
+    $.string('token').notNullable()
+    $.json('userAgent').nullable()
+    $.uuid('user').references('id').inTable('users').onDelete('cascade').index()
   })
 };
 
