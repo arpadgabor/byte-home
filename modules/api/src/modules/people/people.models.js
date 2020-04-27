@@ -1,21 +1,20 @@
 const { Model } = require('objection')
 
-
 module.exports = class People extends Model {
   static tableName = 'people'
-  
+
   static get relationMappings() {
-    const Users = require('../users/model')
-    
+    const Users = require('../users/user.models')
+
     return {
       users: {
         relation: Model.BelongsToOneRelation,
         modelClass: Users,
         join: {
           from: 'people.user',
-          to: 'users.id'
-        }
-      }
+          to: 'users.id',
+        },
+      },
     }
   }
 }

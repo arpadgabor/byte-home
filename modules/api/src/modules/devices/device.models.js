@@ -4,26 +4,26 @@ module.exports = class Devices extends Model {
   static tableName = 'devices'
 
   static get relationMappings() {
-    const Households = require('../households/model')
-    const Sensors = require('../sensors/model')
+    const Households = require('../households/household.models')
+    const Sensors = require('../sensors/sensor.models')
 
     return {
-      household: {
+      households: {
         relation: Model.BelongsToOneRelation,
         modelClass: Households,
         join: {
           from: 'devices.household',
-          to: 'households.id'
-        }
+          to: 'households.id',
+        },
       },
       sensors: {
         relation: Model.HasManyRelation,
         modelClass: Sensors,
         join: {
           from: 'devices.id',
-          to: 'sensors.device'
-        }
-      }
+          to: 'sensors.device',
+        },
+      },
     }
   }
 }

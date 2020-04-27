@@ -1,6 +1,6 @@
-const Devices = require('../../modules/devices/model')
-const Sensors = require('../../modules/sensors/model')
-const Readings = require('../../modules/readings/model')
+const Devices = require('../../modules/devices/device.models')
+const Sensors = require('../../modules/sensors/sensor.models')
+const Readings = require('../../modules/readings/reading.models')
 
 const onPing = (payload, mqtt) => {
   console.log(payload)
@@ -9,15 +9,18 @@ const onPing = (payload, mqtt) => {
 // TODO Move method soon TM
 const registerDevice = async (payload, mqtt) => {
   const deviceMac = payload.mac
-  const deviceQuery = await Devices.query().withGraphFetched('sensors').where('mac', deviceMac).first()
-  
-  if(!deviceQuery) {
+  const deviceQuery = await Devices.query()
+    .withGraphFetched('sensors')
+    .where('mac', deviceMac)
+    .first()
+
+  if (!deviceQuery) {
     const sensors = payload.msg.sensors
     await Devices.query().insertGraph({
       mac: deviceMac,
-      sensors: sensors
+      sensors: sensors,
     })
-  } else if(deviceQuery.sensors.length === 0) {
+  } else if (deviceQuery.sensors.length === 0) {
     const sensors = payload.msg.sensors
     await Devices.relatedQuery('sensors').for(deviceQuery.id).insert(sensors)
   }
@@ -27,18 +30,20 @@ const registerDevice = async (payload, mqtt) => {
 
 const onReading = async (payload, mqtt) => {
   console.log(payload)
-  if(payload.uuid === '') {
+  if (payload.uuid === '') {
     registerDevice(payload, mqtt)
     return
   }
 
-  const deviceSensors = await Sensors.query().where('device', payload.uuid).select('id', 'type')
+  const deviceSensors = await Sensors.query()
+    .where('device', payload.uuid)
+    .select('id', 'type')
 
-  for(let sensor of deviceSensors) {
+  for (let sensor of deviceSensors) {
     try {
       await Readings.query().insert({
         value: payload.msg.sensors[sensor.type],
-        sensor: sensor.id
+        sensor: sensor.id,
       })
     } catch (e) {
       console.log(e)
@@ -51,7 +56,7 @@ const gateway = (payload, mqtt) => {
 }
 
 module.exports = {
-  'ping': onPing,
+  ping: onPing,
   'device/+/send': onReading,
-  'gateway/#': gateway
+  'gateway/#': gateway,
 }

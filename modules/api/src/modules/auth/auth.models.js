@@ -6,9 +6,9 @@ class TokenWhitelist extends Model {
 
 class Roles extends Model {
   static tableName = 'roles'
-  
+
   static get relationMappings() {
-    const Users = require('../users/model')
+    const Users = require('../users/user.models')
     return {
       user: {
         relation: Model.ManyToManyRelation,
@@ -17,15 +17,16 @@ class Roles extends Model {
           from: 'roles.id',
           through: {
             from: 'user_roles.role',
-            to: 'user_roles.user'
+            to: 'user_roles.user',
           },
-          to: 'users.id'
-        }
-      }
+          to: 'users.id',
+        },
+      },
     }
   }
 }
 
 module.exports = {
-  TokenWhitelist, Roles
+  TokenWhitelist,
+  Roles,
 }

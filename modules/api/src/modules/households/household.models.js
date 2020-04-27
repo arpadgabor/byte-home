@@ -4,16 +4,16 @@ module.exports = class Households extends Model {
   static tableName = 'households'
 
   static get relationMappings() {
-    const Users = require('../users/model')
-    const Devices = require('../devices/model')
+    const Users = require('../users/user.models')
+    const Devices = require('../devices/device.models')
     return {
       devices: {
         relation: Model.HasManyRelation,
         modelClass: Devices,
         join: {
           from: 'households.id',
-          to: 'devices.household'
-        }
+          to: 'devices.household',
+        },
       },
       users: {
         relation: Model.ManyToManyRelation,
@@ -22,11 +22,11 @@ module.exports = class Households extends Model {
           from: 'households.id',
           through: {
             from: 'user_households.household',
-            to: 'user_households.user'
+            to: 'user_households.user',
           },
-          to: 'users.id'
-        }
-      }
+          to: 'users.id',
+        },
+      },
     }
   }
 }
