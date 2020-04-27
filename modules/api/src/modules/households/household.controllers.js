@@ -7,7 +7,10 @@ const getAll = async (ctx) => {
 }
 
 const getById = async (ctx) => {
-  const household = await HouseholdService.findById(ctx.params.id, 'devices')
+  const household = await HouseholdService.findById(
+    ctx.params.id,
+    'devices.sensors'
+  )
   ctx.send(Code.OK, household)
 }
 

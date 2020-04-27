@@ -20,10 +20,11 @@ const userGuard = async (ctx, next) => {
   try {
     const payload = AuthService.verifyAccess(accessToken)
     ctx.state.userId = payload.sub
-    await next()
   } catch (e) {
+    console.log(e)
     throw new HttpError('Access expired', Code.UNAUTHORIZED)
   }
+  await next()
 }
 
 module.exports = {

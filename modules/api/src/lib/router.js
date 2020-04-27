@@ -1,7 +1,9 @@
 const Router = require('@koa/router')
+
 const AuthRoutes = require('../modules/auth/auth.routing')
 const HouseholdRoutes = require('../modules/households/household.routing')
 const UserRoutes = require('../modules/users/user.routing')
+const SensorRoutes = require('../modules/sensors/sensor.routing')
 
 const router = new Router({
   prefix: '/api',
@@ -10,10 +12,11 @@ const router = new Router({
 router.use(AuthRoutes.routes())
 router.use(HouseholdRoutes.routes())
 router.use(UserRoutes.routes())
+router.use(SensorRoutes.routes())
 
 console.log(' API: Print routes')
 router.stack.forEach((route) => {
-  console.log('    :', route.path)
+  console.log('    :', route.methods, route.path)
 })
 console.log(' API: ============')
 
