@@ -6,6 +6,6 @@ const UserControllers = require('./user.controllers')
 
 const router = new Router({ prefix: '/users' })
 
-router.get('/', Guard.userGuard, UserControllers.getMe)
+router.get('/me', Guard.userGuard, UserControllers.getMe)
 
 module.exports = router

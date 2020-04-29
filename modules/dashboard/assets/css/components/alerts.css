@@ -1,0 +1,7 @@
+.alert {
+  @apply w-full rounded py-2 px-3 border text-sm font-bold;
+}
+
+.alert.error {
+  @apply bg-red-200 border-red-500 text-red-900;
+}

@@ -1,0 +1,47 @@
+.btn {
+  @apply py-2 px-3 rounded font-bold transition-all duration-300 border;
+}
+
+.btn:focus {
+  @apply outline-none shadow-outline;
+}
+
+.btn:disabled {
+  @apply bg-gray-300 text-gray-600 cursor-not-allowed !important;
+}
+
+.btn.btn-primary {
+  @apply bg-primary-600 text-white border-transparent;
+}
+
+.btn.btn-primary:hover {
+  @apply shadow-lg bg-primary-700;
+}
+
+.btn.btn-primary:active {
+  @apply bg-primary-800;
+}
+
+.btn.btn-secondary {
+  @apply bg-primary-100 text-primary-700 border-primary-700;
+}
+
+.btn.btn-secondary:hover {
+  @apply bg-primary-200 border-primary-900 text-primary-900;
+}
+
+.btn.btn-secondary:active {
+  @apply bg-primary-600 border-primary-900 text-white;
+}
+
+.btn.btn-tertiary {
+  @apply bg-transparent text-primary-600 border-transparent;
+}
+
+.btn.btn-tertiary:hover {
+  @apply bg-primary-100 text-primary-700;
+}
+
+.btn.btn-tertiary:active {
+  @apply bg-primary-600 text-white;
+}

@@ -3,16 +3,18 @@ const AuthService = require('./auth.services')
 const UserService = require('../users/user.services')
 
 exports.login = async (ctx) => {
-  const { accessToken, refreshToken } = await AuthService.authenticate(
+  const { user, accessToken, refreshToken } = await AuthService.authenticate(
     ctx.request.body
   )
   const { browser, source, platform } = ctx.userAgent
 
-  await AuthService.whitelistToken(user.id, refreshToken, {
+  const whitelisted = await AuthService.whitelistToken(user.id, refreshToken, {
     browser: browser,
     platform: platform,
     source: source,
   })
+
+  console.log(whitelisted)
 
   ctx.cookies.set('refresh', refreshToken, { signed: true })
 
@@ -42,17 +44,21 @@ exports.logout = async (ctx) => {
 
 exports.refresh = async (ctx) => {
   const refresh = ctx.cookies.get('refresh', { signed: true })
+
+  if (!refresh) {
+    return ctx.send(Code.FORBIDDEN, 'No refresh token provided')
+  }
   const whitelist = await AuthService.findToken(refresh)
 
   try {
     if (!whitelist) {
       // Refresh is not in whitelist
       ctx.cookies.set('refresh', null)
-      return ctx.send(Code.FORBIDDEN, 'Session expired')
+      return ctx.send(Code.UNAUTHORIZED, 'Session invalid')
     }
     // Verify refresh token
     const payload = AuthService.verifyRefresh(refresh)
-    const user = await UserService.findById(payload.sub)
+    const user = await UserService.findById(payload.sub, 'person')
 
     const accessToken = AuthService.generateAccessToken({
       id: user.id,
@@ -64,11 +70,12 @@ exports.refresh = async (ctx) => {
       accessToken: accessToken,
     })
   } catch (e) {
+    console.log(e)
+
     if (whitelist) {
-      // Refresh token is not valid & is in whitelist
       await AuthService.blacklistToken(whitelist.token)
     }
     ctx.cookies.set('refresh', null)
-    return ctx.send(Code.FORBIDDEN, 'Session expired')
+    return ctx.send(Code.UNAUTHORIZED, 'Session expired')
   }
 }

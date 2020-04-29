@@ -16,8 +16,28 @@ router.use(SensorRoutes.routes())
 
 console.log(' API: Print routes')
 router.stack.forEach((route) => {
-  console.log('    :', route.methods, route.path)
+  if (route.methods.includes('HEAD')) {
+    route.methods.shift()
+  }
+
+  const printMethod = (method) => {
+    switch (method) {
+      case 'POST':
+        return '  POST'
+      case 'PUT':
+        return '   PUT'
+      case 'PATCH':
+        return ' PATCH'
+      case 'GET':
+        return '   GET'
+      case 'DELETE':
+        return 'DELETE'
+    }
+  }
+
+  console.log('    :', printMethod(route.methods[0]), route.path)
 })
-console.log(' API: ============')
+
+console.log('=========================================')
 
 module.exports = router

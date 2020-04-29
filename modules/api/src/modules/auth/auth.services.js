@@ -25,11 +25,16 @@ const authenticate = async ({ email, password }) => {
 
   if (match) {
     return {
-      accessToken: generateAccessToken(user.id, user.roles, user.verified),
-      refreshToken: generateRefreshToken(user.id, user.roles),
+      user: user,
+      accessToken: generateAccessToken({
+        id: user.id,
+        roles: user.roles,
+        verified: user.verified,
+      }),
+      refreshToken: generateRefreshToken({ id: user.id, roles: user.roles }),
     }
   } else {
-    throw HttpError('Password or email do not match', Code.BAD_REQUEST)
+    throw new HttpError('Password or email do not match', Code.BAD_REQUEST)
   }
 }
 

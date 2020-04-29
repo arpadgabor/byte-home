@@ -7,33 +7,34 @@ module.exports = async (ctx, next) => {
   try {
     await next()
   } catch (err) {
-
-    if(err instanceof HttpError) {
-      return ctx.send(err.status, { message: err.message })
+    if (err instanceof HttpError) {
+      return ctx.send(err.status, err.message)
     }
 
-    if(err instanceof Joi.ValidationError) {
-      return ctx.send(Code.BAD_REQUEST, { message: err.message })
+    if (err instanceof Joi.ValidationError) {
+      return ctx.send(Code.BAD_REQUEST, err.message)
     }
 
     if (err instanceof Objection.ValidationError) {
-      return ctx.send(Code.BAD_REQUEST, { message: err.message })
+      return ctx.send(Code.BAD_REQUEST, err.message)
     }
 
     if (err instanceof Objection.UniqueViolationError) {
-      return ctx.send(Code.CONFLICT, { message: err.message })
+      return ctx.send(Code.CONFLICT, err.message)
     }
 
     if (err instanceof Objection.ForeignKeyViolationError) {
-      return ctx.send(Code.BAD_REQUEST, { message: err.message })
+      return ctx.send(Code.BAD_REQUEST, err.message)
     }
-    
+
     if (err instanceof Objection.NotFoundError) {
-      return ctx.send(Code.NOT_FOUND, { message: err.message })
+      return ctx.send(Code.NOT_FOUND, err.message)
     }
 
     console.error(err)
-    return ctx.send(Code.INTERNAL_SERVER_ERROR, { message: err.message || 'Internal error.' })
-
+    return ctx.send(
+      Code.INTERNAL_SERVER_ERROR,
+      err.message || 'Internal error.'
+    )
   }
 }

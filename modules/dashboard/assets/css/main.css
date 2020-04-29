@@ -1,0 +1,9 @@
+@import "./components/typography.css";
+@import "./components/alerts.css";
+@import "./components/button.css";
+
+html, body {
+  min-height: -webkit-fill-available;
+  min-height: 100vh;
+  @apply w-full m-0 p-0;
+}
