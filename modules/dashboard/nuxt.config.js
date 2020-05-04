@@ -16,7 +16,9 @@ export default {
   },
   css: ['@/assets/css/tailwind.css'],
   plugins: [
-    '@/plugins/http.server'
+    '@/plugins/http.server',
+    '@/plugins/charts.client',
+
   ],
   middleware: ['authenticated'],
   buildModules: ['@nuxtjs/tailwindcss',],
@@ -37,6 +39,9 @@ export default {
     }
   },
   build: {
+    vendor : [
+      'vue-apexchart'
+    ],
     extend (config, ctx) {
     }
   }
