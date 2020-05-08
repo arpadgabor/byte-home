@@ -2,16 +2,19 @@ const jwt = require('jsonwebtoken')
 const config = require('../../../config')
 const Code = require('../../utils/statusCodes')
 const UserService = require('../users/user.services')
+const PeopleService = require('../people/people.services')
 const { hash, verify, argon2id } = require('argon2')
 const { TokenWhitelist, Roles } = require('./auth.models')
 const { HttpError } = require('../../utils/errors')
 
-const register = async ({ email, password }) => {
+const register = async ({ email, password, firstName, lastName }) => {
   const hashed = await hash(password, { type: argon2id })
 
   const userRole = await UserService.findRole('user')
 
   let user = await UserService.create({ email: email, password: hashed })
+  await PeopleService.create({ firstName, lastName }, user.id)
+
   await user.$relatedQuery('roles').relate(userRole)
 
   return user

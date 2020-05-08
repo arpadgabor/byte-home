@@ -30,6 +30,8 @@ router.post(
   validate({
     email: Joi.string().email().required(),
     password: Joi.string().required().min(6).max(128),
+    firstName: Joi.string().required(),
+    lastName: Joi.string().required()
   }),
   register
 )

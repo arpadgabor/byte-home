@@ -10,7 +10,7 @@ export default {
     return {
       options: {
         grid: {
-          show: false,
+          show: true,
         },
         xaxis: {
           labels: {
@@ -22,11 +22,11 @@ export default {
         },
         yaxis: {
           labels: {
-            show: false,
+            show: true,
           }
         },
         stroke: {
-          curve: 'smooth',
+          curve: 'straight',
         },
         dataLabels: {
           enabled: false
@@ -46,7 +46,7 @@ export default {
 <template>
   <VueApexCharts
     max-width="300"
-    type="bar"
+    type="line"
     class="p-0"
     :options="options"
     :series="series"

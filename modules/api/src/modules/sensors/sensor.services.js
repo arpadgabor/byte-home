@@ -1,22 +1,28 @@
 const Sensor = require('./sensor.models')
 const Readings = require('../readings/reading.models')
-const { raw, fn } = require('objection')
+const { raw } = require('objection')
 
-const timeseries = async (sensorId, { from, to, step }) => {
-  let fromDate = new Date(from).toISOString()
-  let toDate = new Date(to).toISOString()
-
-  const data = await Readings.query()
-    .select(
-      raw(`date_trunc('${step}', time)`).as('datetime'),
-      raw('avg(value)')
-    )
+const timeseries = async (sensorId, { from, to, step, avg = 'true', min, max, compareBy, compareAt }) => {
+  const query = Readings
+    .query()
     .where('sensor', sensorId)
-    .whereBetween('time', [toDate, fromDate])
+    .whereBetween('time', [to, from])
     .groupBy('datetime')
     .orderBy('datetime')
+    .select(raw(`date_trunc('${step}', time)`).as('datetime'))
 
-  return data
+  if (compareBy) {
+    query
+      .select(raw(`date_part('${compareBy}', time)`).as('datepart'))
+      .having(raw(`date_part('${compareBy}', time)`), '=', compareAt)
+      .groupBy('datepart')
+  }
+
+  if (avg === 'true') query.avg('value')
+  if (min === 'true') query.min('value')
+  if (max === 'true') query.max('value')
+
+  return await query
 }
 
 module.exports = {

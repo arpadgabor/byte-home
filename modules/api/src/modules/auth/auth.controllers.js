@@ -3,18 +3,20 @@ const AuthService = require('./auth.services')
 const UserService = require('../users/user.services')
 
 exports.login = async (ctx) => {
-  const { user, accessToken, refreshToken } = await AuthService.authenticate(
-    ctx.request.body
-  )
   const { browser, source, platform } = ctx.userAgent
 
-  const whitelisted = await AuthService.whitelistToken(user.id, refreshToken, {
+  const {
+    user,
+    accessToken,
+    refreshToken
+  } = await AuthService.authenticate(ctx.request.body)
+
+
+  await AuthService.whitelistToken(user.id, refreshToken, {
     browser: browser,
     platform: platform,
     source: source,
   })
-
-  console.log(whitelisted)
 
   ctx.cookies.set('refresh', refreshToken, { signed: true })
 
@@ -25,7 +27,7 @@ exports.register = async (ctx) => {
   const user = await AuthService.register(ctx.request.body)
   delete user.password
 
-  ctx.send(Code.CREATED, { user: user })
+  ctx.send(Code.CREATED, user)
 }
 
 exports.forgot = async (ctx) => {
