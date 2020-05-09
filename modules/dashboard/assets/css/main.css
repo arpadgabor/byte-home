@@ -1,6 +1,7 @@
 @import "./components/typography.css";
 @import "./components/alerts.css";
 @import "./components/button.css";
+@import "./components/dialog.css";
 
 html, body {
   min-height: -webkit-fill-available;

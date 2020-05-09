@@ -18,6 +18,6 @@ export const api = {
       `api/households/${householdId}/device`,
 
     getSensorsTimeseries: (sensorId, from, to, step) =>
-      `api/sensors/${sensorId}?from=${from}&to=${to}&step=${step}`
+      `api/sensors/timeseries/${sensorId}?from=${from}&to=${to}&step=${step}`
   }
 }

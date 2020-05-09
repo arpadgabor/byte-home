@@ -33,6 +33,7 @@ export default {
     async fetchTimeseries() {
       const timeNow = new Date()
       const before = subDays(timeNow, 31)
+
       const url = api.private.getSensorsTimeseries(
         this.id, timeNow.toISOString(), before.toISOString(), this.step
       )
@@ -43,9 +44,7 @@ export default {
         console.log(e)
       }
     },
-    /**
-     * @param {Array} series
-    */
+
     parseSeries(series) {
       return series.map((val) => {
         return {

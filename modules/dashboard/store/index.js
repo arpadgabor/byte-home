@@ -5,7 +5,8 @@ export const state = () => ({
   token: null,
   authHeader: null,
   interval: null,
-  user: null
+  user: null,
+  modal: null,
 })
 
 export const mutations = {
@@ -21,6 +22,12 @@ export const mutations = {
   },
   setUser(state, user) {
     state.user = user
+  },
+  openModal(state, name) {
+    state.modal = name
+  },
+  closeModal(state) {
+    state.modal = null
   }
 }
 

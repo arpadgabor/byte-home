@@ -1,0 +1,7 @@
+.dialog {
+  @apply bg-white px-4 rounded-lg shadow-lg;
+}
+
+.dialog-container {
+  @apply absolute bg-gray-900 bg-opacity-50;
+}
