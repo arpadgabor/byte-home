@@ -3,7 +3,7 @@
     <span class="text-gray-700 text-sm">{{ label }}</span>
     <input
       class="
-        form-input block w-full
+        form-input h-10 block w-full
         focus:shadow-outline hover:border-primary-300
         focus:border-primary-500
         transition-all duration-300

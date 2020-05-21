@@ -20,7 +20,6 @@ app.use(Helmet())
 app.use(BodyParser())
 app.use(Respond())
 
-
 app.use(Api.routes())
 app.use(Api.allowedMethods())
 

@@ -18,12 +18,12 @@ export default {
   data() {
     return {
       series: null,
-      step: 'day',
+      step: 'minute',
     }
   },
   async mounted() {
     const timeseries = await this.fetchTimeseries()
-
+    console.log(timeseries)
     this.series = [{
       name: 'Average',
       data: this.parseSeries(timeseries)
@@ -32,7 +32,7 @@ export default {
   methods: {
     async fetchTimeseries() {
       const timeNow = new Date()
-      const before = subDays(timeNow, 31)
+      const before = subDays(timeNow, 1)
 
       const url = api.private.getSensorsTimeseries(
         this.id, timeNow.toISOString(), before.toISOString(), this.step

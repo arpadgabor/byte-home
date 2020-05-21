@@ -3,7 +3,7 @@ import dashboardHeader from '@/components/common/dashboard-header'
 import xButton from '@/components/common/forms/button'
 import chartTimeseries from '@/components/dashboard/charts/timeseries'
 import sensor from '@/components/dashboard/sensor'
-
+import glance from'@/components/dashboard/glance'
 export default {
   head() {
     return {
@@ -12,8 +12,9 @@ export default {
   },
   middleware: 'authenticated',
   components: {
-    dashboardHeader,
     xButton,
+    dashboardHeader,
+    glance,
     chartTimeseries,
     sensor
   }
@@ -27,11 +28,15 @@ export default {
         <h1 class="h1">Dashboard</h1>
       </template>
       <template v-slot:actions>
-        <x-button :variant="'primary'" type="'button'">Add Household</x-button>
+        <x-button :variant="'secondary'" type="'button'">Layout</x-button>
       </template>
     </dashboard-header>
-    <section class="container -mt-12">
-      <div class="w-full bg-white rounded shadow-lg p-4" v-if="$store.state.user">
+    <section class="-mt-12">
+      <glance />
+    </section>
+  </main>
+  <!--
+    <div class="w-full bg-white rounded shadow-lg p-4" v-if="$store.state.user">
         <div v-for="household of $store.state.user.households" :key="household.id">
           <div v-for="device of household.devices" :key="device.id" class="grid grid-cols-2 col-gap-4">
             <sensor
@@ -46,8 +51,7 @@ export default {
           </div>
         </div>
       </div>
-    </section>
-  </main>
+   -->
 </template>
 
 <style>

@@ -1,0 +1,7 @@
+.card {
+  @apply rounded-lg bg-white;
+}
+
+.card.default {
+  @apply shadow-lg p-4;
+}

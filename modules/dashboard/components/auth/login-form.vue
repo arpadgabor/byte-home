@@ -11,11 +11,13 @@ export default {
     return {
       email: null,
       password: null,
-      error: null
+      error: null,
+      buttonText: 'Sign in!'
     }
   },
   methods: {
     async signIn() {
+      this.buttonText = 'Loading...'
       const credentials = {
         email: this.email,
         password: this.password
@@ -23,9 +25,11 @@ export default {
 
       try {
         const response = await this.$http.$post('api/auth/login', credentials)
+        this.buttonText = 'Done!'
         this.$store.commit('setToken', response.accessToken)
         this.$router.push('/')
       } catch(e) {
+        this.buttonText = 'Try again'
         let err = await e.response.json()
         this.error = err.message
       }
@@ -63,7 +67,8 @@ export default {
       />
       <x-button
         :variant="'primary'"
-      >Sign in!</x-button>
+        class="w-full"
+      >{{ buttonText }}</x-button>
     </form>
   </div>
 </template>

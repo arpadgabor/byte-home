@@ -147,14 +147,7 @@ static void node_read_task(void *arg)
 	MDF_FREE(data);
 	vTaskDelete(NULL);
 }
-/** @brief
- * 	Called when there is data to be sent.
- *  @return
- *  0 - OK
- *  1 - Not connected to mesh
- *  2 - Not connected to root
- *  3 - Error sending message
- */
+
 int node_write_task(char *msg)
 {
 	mdf_err_t ret = MDF_OK;
@@ -163,13 +156,13 @@ int node_write_task(char *msg)
 	mwifi_data_type_t data_type     = {0x0};
 	uint8_t sta_mac[MWIFI_ADDR_LEN] = {0};
 
-	esp_wifi_get_mac(ESP_IF_WIFI_STA, sta_mac);
-
 	if(!mwifi_is_connected())
 		return 1;
 
 	if(!mwifi_get_root_status())
 		return 2;
+
+	esp_wifi_get_mac(ESP_IF_WIFI_STA, sta_mac);
 
 	size = asprintf(&data, "\
 		{\
@@ -187,7 +180,7 @@ int node_write_task(char *msg)
 	if(ret != MDF_OK) {
 		return 3;
 	}
-	// if no errors
+
 	return 0;
 }
 
