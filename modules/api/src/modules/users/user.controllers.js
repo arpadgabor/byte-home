@@ -4,7 +4,7 @@ const Code = require('../../utils/statusCodes')
 const getMe = async (ctx) => {
   const me = await UserService.findById(
     ctx.state.userId,
-    '[person, households.devices.sensors]'
+    '[person, households.[image, devices.sensors]]'
   )
 
   delete me.password

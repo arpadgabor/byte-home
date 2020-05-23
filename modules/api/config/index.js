@@ -12,7 +12,7 @@ const conf = convict({
     doc: 'The IP address to bind.',
     format: 'ipaddress',
     default: '127.0.0.1',
-    env: 'IP_ADDRESS',
+    env: 'HOST',
   },
   port: {
     doc: 'The port to bind.',

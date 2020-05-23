@@ -6,6 +6,8 @@ module.exports = class Households extends Model {
   static get relationMappings() {
     const Users = require('../users/user.models')
     const Devices = require('../devices/device.models')
+    const Files = require('../files/file.model')
+
     return {
       devices: {
         relation: Model.HasManyRelation,
@@ -27,6 +29,14 @@ module.exports = class Households extends Model {
           to: 'users.id',
         },
       },
+      image: {
+        relation: Model.HasOneRelation,
+        modelClass: Files,
+        join: {
+          from: 'files.id',
+          to: 'households.imageId'
+        }
+      }
     }
   }
 }

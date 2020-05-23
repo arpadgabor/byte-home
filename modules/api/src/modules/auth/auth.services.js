@@ -23,6 +23,10 @@ const register = async ({ email, password, firstName, lastName }) => {
 const authenticate = async ({ email, password }) => {
   let user = await UserService.findByEmail(email, 'roles')
 
+  if (!user) {
+    throw new HttpError('Password or email do not match', Code.BAD_REQUEST)
+  }
+
   user.roles = user.roles.map((role) => role.name)
   const match = await verify(user.password, password, { type: argon2id })
 

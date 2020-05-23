@@ -30,9 +30,29 @@ const addDevice = async (ctx) => {
   ctx.send(Code.OK, household)
 }
 
+const getInvite = async (ctx) => {
+  const { inviteCode, inviteExpiry } = await HouseholdService.findById(ctx.params.id)
+
+  if (new Date(inviteExpiry) > new Date()) {
+    return ctx.send(Code.OK, { inviteCode: inviteCode, inviteExpiry: inviteExpiry })
+  }
+
+  const invite = HouseholdService.generateInviteCode()
+  await HouseholdService.update(ctx.params.id, invite)
+
+  return ctx.send(Code.OK, invite)
+}
+
+const acceptInvite = async ctx => {
+  const household = await HouseholdService.verifyInvite(ctx.request.body.inviteCode, ctx.state.userId)
+  return ctx.send(Code.OK, household)
+}
+
 module.exports = {
   getAll,
   getById,
   create,
   addDevice,
+  getInvite,
+  acceptInvite
 }

@@ -8,6 +8,14 @@ const router = new Router({ prefix: '/households' })
 
 router.get('/', Guard.userGuard, HouseholdControllers.getAll)
 router.get('/:id', Guard.userGuard, HouseholdControllers.getById)
+router.get('/invite/:id', Guard.userGuard, HouseholdControllers.getInvite)
+
+router.post(
+  '/invite',
+  Guard.userGuard,
+  validate({ inviteCode: Joi.string().required() }),
+  HouseholdControllers.acceptInvite
+)
 
 router.put(
   '/:id/device',

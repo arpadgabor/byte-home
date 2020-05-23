@@ -36,6 +36,10 @@ export default {
     '/api/': {
       target: process.env.API_URL,
       pathRewrite: { '^/api/': '' }
+    },
+    '/uploads/': {
+      target: process.env.API_URL,
+      // pathRewrite: { '^/uploads/': '' }
     }
   },
   build: {

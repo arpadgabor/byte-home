@@ -1,5 +1,5 @@
 <template>
-  <main class="w-full -mt-16">
+  <main class="w-full">
     <dashboard-header>
       <template v-slot:title>
         <h1 class="h1">Profile</h1>

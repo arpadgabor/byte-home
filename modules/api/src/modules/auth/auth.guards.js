@@ -21,7 +21,7 @@ const userGuard = async (ctx, next) => {
     const payload = AuthService.verifyAccess(accessToken)
     ctx.state.userId = payload.sub
   } catch (e) {
-    console.log(e)
+    log.error('JWT', e)
     throw new HttpError('Access expired', Code.UNAUTHORIZED)
   }
   await next()

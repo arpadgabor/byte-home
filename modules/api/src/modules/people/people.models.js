@@ -5,6 +5,7 @@ module.exports = class People extends Model {
 
   static get relationMappings() {
     const Users = require('../users/user.models')
+    const Files = require('../files/file.model')
 
     return {
       users: {
@@ -15,6 +16,14 @@ module.exports = class People extends Model {
           to: 'users.id',
         },
       },
+      image: {
+        relation: Model.HasOneRelation,
+        modelClass: Files,
+        join: {
+          from: 'files.id',
+          to: 'people.imageId'
+        }
+      }
     }
   }
 }

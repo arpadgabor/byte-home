@@ -46,11 +46,11 @@ export const actions = {
       response = await this.$http.$get(api.public.getAuthRefresh)
       commit('setToken', response.accessToken)
     } catch (e) {
+      commit('clearInterval')
       if(state.token) {
         this.$router.push('/auth?session=expired')
         commit('setToken', null)
       }
-      commit('clearInterval')
     }
     return response
   },

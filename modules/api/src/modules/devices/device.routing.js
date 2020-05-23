@@ -1,6 +1,6 @@
 const Router = require('@koa/router')
 const Joi = require('@hapi/joi')
-const Guard = require('../auth/guards')
+const Guard = require('../auth/auth.guards')
 const { validate } = require('../../utils/validate')
 const DeviceControllers = require('./device.controllers')
 

@@ -1,9 +1,9 @@
 <script>
 import dashboardHeader from '@/components/common/dashboard-header'
 import xButton from '@/components/common/forms/button'
-import chartTimeseries from '@/components/dashboard/charts/timeseries'
 import sensor from '@/components/dashboard/sensor'
 import glance from'@/components/dashboard/glance'
+
 export default {
   head() {
     return {
@@ -15,14 +15,13 @@ export default {
     xButton,
     dashboardHeader,
     glance,
-    chartTimeseries,
     sensor
   }
 }
 </script>
 
 <template>
-  <main class="w-full -mt-16">
+  <main class="w-full">
     <dashboard-header>
       <template v-slot:title>
         <h1 class="h1">Dashboard</h1>
@@ -31,7 +30,7 @@ export default {
         <x-button :variant="'secondary'" type="'button'">Layout</x-button>
       </template>
     </dashboard-header>
-    <section class="-mt-12">
+    <section>
       <glance />
     </section>
   </main>

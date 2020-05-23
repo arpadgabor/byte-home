@@ -27,6 +27,7 @@ export default {
         const response = await this.$http.$post('api/auth/login', credentials)
         this.buttonText = 'Done!'
         this.$store.commit('setToken', response.accessToken)
+        await this.$store.dispatch('getUser')
         this.$router.push('/')
       } catch(e) {
         this.buttonText = 'Try again'
@@ -46,27 +47,27 @@ export default {
     <form @submit.prevent="signIn()">
       <x-input
         v-model="email"
-        :type="'email'"
-        :label="'Email'"
-        :name="'email'"
-        :placeholder="'john.doe@mail.com'"
-        :autocomplete="'username'"
+        type="email"
+        label="Email"
+        name="email"
+        placeholder="john.doe@mail.com"
+        autocomplete="username"
         required
         autofocus
         class="mb-2"
       />
       <x-input
         v-model="password"
-        :label="'Password'"
-        :name="'password'"
-        :placeholder="'********'"
-        :type="'password'"
-        :autocomplete="'password'"
+        label="Password"
+        name="password"
+        placeholder="********"
+        type="password"
+        autocomplete="password"
         required
         class="mb-4"
       />
       <x-button
-        :variant="'primary'"
+        variant="primary"
         class="w-full"
       >{{ buttonText }}</x-button>
     </form>

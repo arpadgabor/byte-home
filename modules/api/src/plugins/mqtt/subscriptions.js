@@ -1,37 +1,34 @@
 const Devices = require('../../modules/devices/device.models')
 const Sensors = require('../../modules/sensors/sensor.models')
 const Readings = require('../../modules/readings/reading.models')
+const io = require('../sockets')
 
 const onPing = (payload, mqtt) => {
-  console.log(payload)
+  log.info('MQTT', payload)
 }
 
-// TODO Move method soon TM
 const registerDevice = async (payload, mqtt) => {
-  const deviceMac = payload.mac
-  const deviceQuery = await Devices.query()
+  const device = await Devices.query()
     .withGraphFetched('sensors')
-    .where('mac', deviceMac)
+    .where('mac', payload.mac)
     .first()
 
-  if (!deviceQuery) {
-    const sensors = payload.msg.sensors
-    await Devices.query().insertGraph({
-      mac: deviceMac,
-      sensors: sensors,
-    })
-  } else if (deviceQuery.sensors.length === 0) {
-    const sensors = payload.msg.sensors
-    await Devices.relatedQuery('sensors').for(deviceQuery.id).insert(sensors)
+  if (device) {
+    await Devices.relatedQuery('sensors').for(device.id).insert(payload.msg.sensors)
+    return
   }
 
-  mqtt.publish(`device/${deviceMac}/recv`, `uuid:${deviceQuery.id}\0`)
+  // If the device does not exist
+  await Devices.query().insertGraph({
+    mac: payload.mac,
+    sensors: payload.msg.sensors,
+  })
+  mqtt.publish(`device/${payload.mac}/recv`, `uuid:${device.id}\0`)
 }
 
 const onReading = async (payload, mqtt) => {
-  console.log(payload)
   if (payload.uuid === '') {
-    registerDevice(payload, mqtt)
+    await registerDevice(payload, mqtt)
     return
   }
 
@@ -41,22 +38,27 @@ const onReading = async (payload, mqtt) => {
 
   for (let sensor of deviceSensors) {
     try {
+      io.socket.broadcast(sensor.id, { value: payload.msg.sensors[sensor.type], datetime: new Date() })
+
+      if (config.get('env') === 'development') {
+        continue // do not save to database if in development
+      }
       await Readings.query().insert({
         value: payload.msg.sensors[sensor.type],
         sensor: sensor.id,
       })
     } catch (e) {
-      console.log(e)
+      log.error('MQTT', e)
     }
   }
 }
 
 const gateway = (payload, mqtt) => {
-  console.log(payload)
+  log.info('MQTT', payload)
 }
 
 module.exports = {
-  ping: onPing,
+  'ping': onPing,
   'device/+/send': onReading,
   'gateway/#': gateway,
 }
