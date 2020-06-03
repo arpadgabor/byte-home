@@ -13,7 +13,7 @@ export default {
     class="w-full grid grid-cols-1 md:grid-cols-3 gap-4"
   >
     <household-list-item
-      v-for="household of $store.state.user.households"
+      v-for="household of $store.state.auth.user.households"
       :household="household"
       :key="household.id"
     ></household-list-item>

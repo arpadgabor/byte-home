@@ -1,3 +1,17 @@
+<script>
+import dashboardHeader from '@/components/common/dashboard-header'
+import householdList from '@/components/dashboard/households/household-list'
+import xButton from '@/components/common/forms/button'
+
+export default {
+  components: {
+    dashboardHeader,
+    householdList,
+    xButton
+  }
+}
+</script>
+
 <template>
   <main class="w-full">
     <dashboard-header>
@@ -13,20 +27,6 @@
     </section>
   </main>
 </template>
-
-<script>
-import dashboardHeader from '@/components/common/dashboard-header'
-import householdList from '@/components/dashboard/households/household-list'
-import xButton from '@/components/common/forms/button'
-
-export default {
-  components: {
-    dashboardHeader,
-    householdList,
-    xButton
-  }
-}
-</script>
 
 <style lang="postcss" scoped>
 

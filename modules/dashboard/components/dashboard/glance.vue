@@ -12,7 +12,7 @@ export default {
   <section id="at-a-glance" class="w-full grid grid-cols-2 md:grid-cols-4 gap-4">
     <nuxt-link to="/households" id="nof-households" class="card default glance-item">
       <h4 class="text-base m-0 leading-none text-gray-600">Households</h4>
-      <h1 class="text-4xl m-0 leading-none font-bold text-primary-600">{{ $store.state.user.households.length }}</h1>
+      <h1 class="text-4xl m-0 leading-none font-bold text-primary-600">{{ $store.state.auth.user.households.length }}</h1>
     </nuxt-link>
     <div id="nof-households" class="card default glance-item">
 

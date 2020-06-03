@@ -5,16 +5,24 @@ export default {
       type: Array,
       required: true
     },
+    unit: {
+      type: String,
+      default: ''
+    }
   },
-  data: function() {
-    return {
-      options: {
+  computed: {
+    options() {
+      return {
+        noData: {
+          text: 'Nothing to show (yet?).'
+        },
         grid: {
           show: true,
         },
         xaxis: {
+          type: 'datetime',
           labels: {
-            show: false,
+            show: true
           },
           axisTicks: {
             show: false,
@@ -23,6 +31,9 @@ export default {
         yaxis: {
           labels: {
             show: true,
+            formatter: (value) => {
+              return value + this.unit;
+            }
           }
         },
         stroke: {
@@ -31,11 +42,13 @@ export default {
         dataLabels: {
           enabled: false
         },
+        legend: {
+          show: false
+        },
         chart: {
           toolbar: {
-            show: false,
+            show: true,
           },
-          id: 'Timeseries',
         }
       }
     }
@@ -45,7 +58,7 @@ export default {
 
 <template>
   <VueApexCharts
-    max-width="300"
+    :max-width="300"
     type="line"
     class="p-0"
     :options="options"

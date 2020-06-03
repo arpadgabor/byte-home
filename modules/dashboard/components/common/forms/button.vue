@@ -22,7 +22,6 @@ export default {
     },
     variant: {
       default: 'primary',
-
     }
   }
 }

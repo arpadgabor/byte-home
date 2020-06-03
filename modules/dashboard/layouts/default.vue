@@ -1,12 +1,14 @@
 <script>
 import navigation from '@/components/common/navigation'
+import globalDialog from '@/components/common/dialog-base'
 
 export default {
   components: {
-    navigation
+    navigation,
+    globalDialog
   },
   mounted() {
-    this.$store.dispatch('startTimer')
+    this.$store.dispatch('auth/startTimer')
   }
 }
 </script>
@@ -14,6 +16,7 @@ export default {
 <template>
   <div class="min-h-screen w-full bg-gray-100">
     <navigation />
+    <global-dialog />
     <div class="container">
       <nuxt />
     </div>

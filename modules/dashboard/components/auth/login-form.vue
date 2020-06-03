@@ -26,8 +26,8 @@ export default {
       try {
         const response = await this.$http.$post('api/auth/login', credentials)
         this.buttonText = 'Done!'
-        this.$store.commit('setToken', response.accessToken)
-        await this.$store.dispatch('getUser')
+        this.$store.commit('auth/setToken', response.accessToken)
+        await this.$store.dispatch('auth/getUser')
         this.$router.push('/')
       } catch(e) {
         this.buttonText = 'Try again'
