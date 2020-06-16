@@ -6,13 +6,21 @@
                 "${workspaceRoot}/build/**",
                 "${workspaceRoot}/components/**",
                 "${workspaceRoot}/**",
-                "${env:MDF_PATH}/**",
-                "${env:MDF_PATH}/components/**",
-                "${env:MDF_PATH}/esp-idf/**",
-                "${env:MDF_PATH}/esp-idf/components/**"
+                "~/esp/esp-mdf/**",
+                "~/esp/esp-mdf/components/**",
+                "~/esp/esp-mdf/esp-idf/**",
+                "~/esp/esp-mdf/esp-idf/components/**"
             ],
+            "browse": {
+                "path": [
+                    "~/esp/esp-mdf/components",
+                    "~/esp/esp-mdf/esp-idf/components",
+                    "${workspaceRoot}/components"
+                ],
+                "limitSymbolsToIncludedHeaders": false
+            },
             "intelliSenseMode": "gcc-x64",
-            "compilerPath": "${env:HOME}/esp/xtensa-esp32-elf/bin",
+            "compilerPath": "${env:HOME}/esp/xtensa-esp32-elf/bin/xtensa-esp32-elf-gcc",
             "cStandard": "c11",
             "cppStandard": "c++17",
             "configurationProvider": "vector-of-bool.cmake-tools"

@@ -1,7 +1,7 @@
-set(COMPONENT_SRCS "main.c" "wifimesh.c")
+set(COMPONENT_SRCS "main.c" "wifimesh.c" "device.c")
 
 set(COMPONENT_ADD_INCLUDEDIRS "")
 
-set(COMPONENT_REQUIRES mcommon mconfig mwifi mlink mesh_mqtt_handle wifi-manager dht esp_idf_lib_helpers)
+set(COMPONENT_REQUIRES mcommon mconfig mwifi mlink mesh_mqtt_handle wifi-manager dht esp_idf_lib_helpers led_strip)
 
 register_component()

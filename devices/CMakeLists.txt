@@ -3,5 +3,5 @@
 
 cmake_minimum_required(VERSION 3.5)
 set(EXTRA_COMPONENT_DIRS components)
-include($ENV{MDF_PATH}/project.cmake)
+include($ENV{HOME}/esp/esp-mdf/project.cmake)
 project(ByteDevice)

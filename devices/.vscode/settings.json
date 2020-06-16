@@ -17,6 +17,7 @@
     "string.h": "c",
     "stdio.h": "c",
     "wifimesh.h": "c",
-    "mwifi.h": "c"
+    "mwifi.h": "c",
+    "led_strip.h": "c"
   }
 }

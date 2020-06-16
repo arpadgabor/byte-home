@@ -1,4 +1,4 @@
-menu "Wifi Manager Configuration"
+menu "BYTE Device Config"
 
 config WIFI_MANAGER_TASK_PRIORITY
 	int "RTOS Task Priority for the wifi_manager"

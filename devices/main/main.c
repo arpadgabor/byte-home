@@ -5,24 +5,27 @@
 #include "esp_system.h"
 #include "esp_log.h"
 #include "wifi_manager.h"
-#include "wifimesh.h"
 #include "mdf_common.h"
 #include "mwifi.h"
-#include "dht.h"
+// #include "dht.h"
+#include "driver/gpio.h"
+#include "wifimesh.h"
+#include "device.h"
 
-static const dht_sensor_type_t sensor_type = DHT_TYPE_AM2301;
+#define NUM_LEDS 30
+#include "led_strip.h"
+// static const dht_sensor_type_t sensor_type = DHT_TYPE_AM2301;
+// static const gpio_num_t sensor_gpio = 4;
+#define SENSOR_GPIO 4
+#define MODE_NO_NET 1
 
-static const gpio_num_t dht_gpio = 4;
+#define RED   0xFF0000
+#define GREEN 0x00FF00
+#define BLUE  0x0000FF
 
 static const char TAG[] = "BYTE";
-char* device_uuid;
 
-
-void cb_connection_ok(void *pvParameter){
-	ESP_LOGE(TAG, "WIFI 1 CONNECTED!");
-	esp_restart();
-}
-
+/*
 void read_dht(void *pvParameters)
 {
 	int16_t temperature = 0;
@@ -31,31 +34,16 @@ void read_dht(void *pvParameters)
 
 	for(;;)
 	{
-		if (dht_read_data(sensor_type, dht_gpio, &humidity, &temperature) == ESP_OK) {
+		if (dht_read_data(sensor_type, sensor_gpio, &humidity, &temperature) == ESP_OK) {
 			char *msg;
 			asprintf(&msg, 
-				" { \"sensors\": { \"humidity\": %.1f, \"temperature\": %.1f } }",
+				"{ \"sensors\": { \"humidity\": %.1f, \"temperature\": %.1f } }",
 				(float)humidity/10, (float)temperature/10
 			);
-			int err = node_write_task(msg);
+			node_write_task(msg);
 			free(msg);
 
-			switch(err) {
-				case 0:
-					ESP_LOGI(TAG, "Humidity: %d%% Temp: %dC\n", humidity, temperature);
-					break;
-				case 1:
-					ESP_LOGE(TAG, "ERR1: Not connected to mesh!");
-					break;
-				case 2:
-					ESP_LOGE(TAG, "ERR2: Not connected to root!");
-					break;
-				case 3:
-					ESP_LOGE(TAG, "ERR3: Could not send message!");
-					break;
-				default:
-					break;
-			}
+			ESP_LOGI(TAG, "Humidity: %d%% Temp: %dC\n", humidity, temperature);
 		}
 		else
 			ESP_LOGW(TAG, "Could not read data from sensor\n");
@@ -63,78 +51,75 @@ void read_dht(void *pvParameters)
 		vTaskDelay((int)delay / portTICK_PERIOD_MS);
 	}
 }
+*/
 
-bool read_uuid() {
-	nvs_handle handle;
-	ESP_LOGI(TAG, "Reading UUID");
-
-	if(nvs_open("devid", NVS_READONLY, &handle) == ESP_OK){
-		ESP_LOGI(TAG, "NVS Open");
-
-		device_uuid = (char*)malloc(sizeof(char[36]));
-		memset(device_uuid, 0x00, sizeof(char[36]));
-
-		size_t sz = sizeof(char[36]);
-		uint8_t *buff = (uint8_t*)malloc(sizeof(uint8_t) * sz);
-		memset(buff, 0x00, sizeof(char[36]));
-
-		esp_err_t esp_err = nvs_get_blob(handle, "devid", buff, &sz);
-		if(esp_err != ESP_OK){
-			free(buff);
-			return false;
-		}
-
-		memcpy(device_uuid, buff, sz);
-		device_uuid[36] = '\0';
-		ESP_LOGI(TAG, "UUID: %s", device_uuid);
-
-		return true;
-	}
-
-	ESP_LOGE(TAG, "Could not read UUID");
-	return false;
+void send_data(int status)
+{
+	char *msg;
+	asprintf(&msg, 
+		"{ \"sensors\": { \"bool\": %d } }",
+		status
+	);
+	node_write_task(msg);
+	free(msg);
 }
 
-void write_uuid(char *uuid) {
-	nvs_handle handle;
+// void cb_sensor_task(void *params)
+// {
+// 	int sensor_status = -1;
+// 	int sensor_check;
 
-	ESP_LOGI(TAG, "Writing UUID %s", uuid);
+// 	gpio_pad_select_gpio(SENSOR_GPIO);
+// 	gpio_set_direction(SENSOR_GPIO, GPIO_MODE_INPUT);
 
-	nvs_open("devid", NVS_READWRITE, &handle);
-	esp_err_t esp_err = nvs_set_blob(handle, "devid", uuid, 36);
+// 	for(;;)
+// 	{
+// 		sensor_check = gpio_get_level(SENSOR_GPIO);
+// 		if(sensor_check != sensor_status)
+// 		{
+// 			send_data(sensor_check);
+// 			sensor_status = sensor_check;
+// 			ESP_LOGI(TAG, "%d", gpio_get_level(SENSOR_GPIO));
+// 		}
+// 		vTaskDelay(1000 / portTICK_PERIOD_MS);
+// 	}
+// }
 
-	if(esp_err != ESP_OK) {
-		ESP_LOGE(TAG, "Failed to write UUID");
+void cb_test()
+{
+	uint8_t sta_mac[MWIFI_ADDR_LEN] = {0};
+	esp_wifi_get_mac(ESP_IF_WIFI_STA, sta_mac);
+	for(;;)
+	{
+		ESP_LOGI(TAG, "Mac: %02x:%02x:%02x:%02x:%02x:%02x", MAC2STR(sta_mac));
+		vTaskDelay(1000 / portTICK_PERIOD_MS);
 	}
+}
 
-	esp_restart();
+void cb_device_start()
+{
+	uint8_t sta_mac[MWIFI_ADDR_LEN] = {0};
+	esp_wifi_get_mac(ESP_IF_WIFI_STA, sta_mac);
+	ESP_LOGI(TAG, "Mac: %02x:%02x:%02x:%02x:%02x:%02x", MAC2STR(sta_mac));
+
+	xTaskCreate(cb_test, "cb_test", configMINIMAL_STACK_SIZE * 3, NULL, 5, NULL);
 }
 
 void app_main()
 {
-	nvs_flash_init();
-	read_uuid();
-	if(wifi_manager_fetch_wifi_sta_config()) {
-		if(mesh_start()){
-			ESP_LOGW(TAG, "Waiting 20s for connection...");
-			vTaskDelay(20000 / portTICK_PERIOD_MS);
+	char *device_map = "{ \"sensors\": [{ \"type\": \"bool\" }] }";
+	if(!MODE_NO_NET)
+	{
+		start_device(device_map, &cb_device_start);
+	}
+	else
+	{
+		ws2812_control_init();
+		struct led_state new_state;
+		new_state.leds[0] = RED;
+		new_state.leds[1] = GREEN;
+		new_state.leds[2] = BLUE;
 
-			if(read_uuid()) {
-				ESP_LOGW(TAG, "Starting reading sensors...");
-				xTaskCreate(read_dht, "read_dht", configMINIMAL_STACK_SIZE * 3, NULL, 5, NULL);
-			} else {
-				char *msg;
-				ESP_LOGW(TAG, "Setting up device...");
-				device_uuid = malloc(sizeof(char[3]));
-				strcpy(device_uuid, "");
-				asprintf(&msg, "{ \"sensors\": [{ \"type\": \"humidity\", \"unit\": \"%%\" }, { \"type\": \"temperature\", \"unit\": \"C\" }] }");
-				node_write_task(msg);
-			}
-		} else {
-			ESP_LOGE(TAG, "Mesh else...");
-		}
-	} else {
-		wifi_manager_start();
-		wifi_manager_set_callback(EVENT_STA_GOT_IP, &cb_connection_ok);
+		ws2812_write_leds(new_state);
 	}
 }

@@ -1,7 +1,4 @@
-char* device_uuid;
-
-bool read_uuid();
-void write_uuid(char *uuid);
+#include "device.h"
 
 int mesh_start();
 
@@ -14,3 +11,5 @@ int mesh_start();
  *  3 - Error sending message
  */
 int node_write_task(char *data);
+
+void msg_handler(char *msg);

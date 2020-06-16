@@ -13,7 +13,6 @@ typedef struct {
 } node_list_t;
 
 static const char *TAG = "MESH";
-int led = 0;
 
 static bool addrs_remove(uint8_t *addrs_list, size_t *addrs_num, const uint8_t *addr)
 {
@@ -27,6 +26,23 @@ static bool addrs_remove(uint8_t *addrs_list, size_t *addrs_num, const uint8_t *
 	}
 
 	return false;
+}
+
+void msg_handler(char *msg)
+{
+	if(strstr(msg, "uuid") != NULL) {
+		// Save UUID of the device and restart
+		char buff[42];
+		strcpy(buff, msg);
+
+		strtok(msg, ":");
+		char *uuid = strtok(NULL, ":");
+
+		write_uuid(uuid);
+		esp_restart();
+	} else {
+		msg_data_handler(msg);
+	}
 }
 
 void root_write_task(void *arg)
@@ -74,7 +90,8 @@ void root_read_task(void *arg)
 	MDF_LOGI("ROOT READ INIT");
 
 	while (mwifi_is_connected() && esp_mesh_get_layer() == MESH_ROOT) {
-		if (!mesh_mqtt_is_connect()) {
+		if (!mesh_mqtt_is_connect()) 
+		{
 			vTaskDelay(500 / portTICK_RATE_MS);
 			continue;
 		}
@@ -87,16 +104,8 @@ void root_read_task(void *arg)
 
 		ret = mwifi_root_write(dest_addr, 1, &data_type, data, size, true);
 		if(ret == ESP_ERR_MESH_NO_ROUTE_FOUND) {
-			if(strstr(data, "uuid") != NULL) {
-				char buff[42];
-				strcpy(buff, data);
-
-				strtok(data, ":");
-				char *uuid = strtok(NULL, ":");
-
-				write_uuid(uuid);
-				goto MEM_FREE;
-			}
+			msg_handler(data);
+			goto MEM_FREE;
 		}
 		MDF_ERROR_GOTO(ret != MDF_OK, MEM_FREE, "<%s> mwifi_root_write", mdf_err_to_name(ret));
 
@@ -130,17 +139,8 @@ static void node_read_task(void *arg)
 		ret = mwifi_read(src_addr, &data_type, data, &size, portMAX_DELAY);
 		MDF_ERROR_CONTINUE(ret != MDF_OK, "<%s> mwifi_read", mdf_err_to_name(ret));
 		MDF_LOGD("Node receive: " MACSTR ", size: %d, data: %s", MAC2STR(src_addr), size, data);
-		printf(data);
 
-		if(strstr(data, "uuid") != NULL) {
-			char buff[42];
-			strcpy(buff, data);
-
-			strtok(data, ":");
-			char *uuid = strtok(NULL, ":");
-
-			write_uuid(uuid);
-		}
+		msg_handler(data);
 	}
 
 	MDF_LOGW("NODE READ EXIT");
@@ -157,27 +157,30 @@ int node_write_task(char *msg)
 	uint8_t sta_mac[MWIFI_ADDR_LEN] = {0};
 
 	if(!mwifi_is_connected())
+	{
+		ESP_LOGE(TAG, "ERR1: Not connected to mesh!");
 		return 1;
+	}
 
 	if(!mwifi_get_root_status())
+	{
+		ESP_LOGE(TAG, "ERR2: Not connected to root!");
 		return 2;
+	}
 
 	esp_wifi_get_mac(ESP_IF_WIFI_STA, sta_mac);
 
 	size = asprintf(&data, "\
-		{\
-			\"mac\": \"%02x%02x%02x%02x%02x%02x\",\
-			\"uuid\": \"%s\",\
-			\"layer\": %d,\
-			\"msg\": %s\
-		}",
+		{\"mac\": \"%02x%02x%02x%02x%02x%02x\",\"uuid\": \"%s\",\"layer\": %d,\"msg\": %s}",
 		MAC2STR(sta_mac), device_uuid, esp_mesh_get_layer(), msg);
 
 	MDF_LOGD("Node send, size: %d, data: %s", size, data);
 	ret = mwifi_write(NULL, &data_type, data, size, true);
 	MDF_FREE(data);
 
-	if(ret != MDF_OK) {
+	if(ret != MDF_OK)
+	{
+		ESP_LOGE(TAG, "ERR3: Could not send message!");
 		return 3;
 	}
 
