@@ -43,7 +43,7 @@ export default {
       }
 
       if(subByMonth) {
-        timeseries = await this.fetchTimeseries(subMonths(new Date(), subValue), new Date(), 'day')
+        timeseries = await this.fetchTimeseries(subMonths(new Date(), subValue), new Date(), '1 day')
       } else {
         timeseries = await this.fetchTimeseries(subDays(new Date(), subValue))
       }
@@ -67,10 +67,10 @@ export default {
       ]
     },
 
-    async fetchTimeseries(beforeDate, fromDate = new Date(), step = 'hour') {
+    async fetchTimeseries(finish, start = new Date(), step = '1 hour') {
 
       const url = api.private.getSensorsTimeseries(
-        this.id, fromDate.toISOString(), beforeDate.toISOString(), step, this.modes.avg, this.modes.min, this.modes.max
+        this.id, finish.toISOString(), start.toISOString(), step, this.modes.avg, this.modes.min, this.modes.max
       )
 
       try {
@@ -85,11 +85,11 @@ export default {
       return series.map((val) => {
         return {
           x: new Date(val.datetime),
-          y: val[name].toFixed(1)
+          y: val[name]?.toFixed(1)
         }
       })
     },
-
+    // Hides AVG / MIN / MAX from the graph
     switchMode(name) {
       this.modes[name] = !this.modes[name]
 
@@ -127,7 +127,7 @@ export default {
           <small class="text-gray-500 uppercase">{{ type }}</small>
           <h3 class="h3" contenteditable>{{ name || 'Click to set a name' }}</h3>
         </div>
-        <x-button variant="tertiary" type="button" @click.native="loadChart">Reload</x-button>
+        <x-button variant="tertiary" type="button" @click.native="loadChart"><i class="gg-sync"></i></x-button>
       </div>
       <chart-timeseries
         v-if="series && !error"

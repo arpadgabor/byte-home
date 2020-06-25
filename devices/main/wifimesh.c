@@ -130,7 +130,7 @@ static void node_read_task(void *arg)
 
 	for (;;) {
 		if (!mwifi_is_connected()) {
-			vTaskDelay(500 / portTICK_RATE_MS);
+			vTaskDelay(pdMS_TO_TICKS(500));
 			continue;
 		}
 
@@ -385,13 +385,8 @@ int mesh_start()
 	MDF_ERROR_ASSERT(mwifi_set_config(&config));
 	MDF_ERROR_ASSERT(mwifi_start());
 
-	// xTaskCreate(node_write_task, "node_write_task", 4 * 1024,
-	// 			NULL, CONFIG_MDF_TASK_DEFAULT_PRIOTY, NULL);
 	xTaskCreate(node_read_task, "node_read_task", 4 * 1024,
 				NULL, CONFIG_MDF_TASK_DEFAULT_PRIOTY, NULL);
-
-	// TimerHandle_t timer = xTimerCreate("print_system_info", 10000 / portTICK_RATE_MS,true, NULL, print_system_info_timercb);
-	// xTimerStart(timer, 0);
 
 	return 1;
 }

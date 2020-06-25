@@ -3,10 +3,12 @@ export const state = () => ({
 })
 
 export const mutations = {
-  open(state, name) {
-    state.name = name
+  open(state, modal) {
+    state.name = modal.name || modal
+    state.title = modal.title
   },
   close(state) {
     state.name = null
+    state.title = null
   }
 }

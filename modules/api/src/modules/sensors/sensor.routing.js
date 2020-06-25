@@ -17,4 +17,15 @@ router.get('/timeseries/:sensorId', Guard.userGuard, validate({
   compareAt: Joi.number().optional()
 }, 'query'), SensorControllers.getTimeseries)
 
+router.get('/timeseries/v2/:sensorId', Guard.userGuard, validate({
+  start: Joi.date().required(),
+  finish: Joi.date().required(),
+  step: Joi.string().required(),
+  avg: Joi.boolean().optional().default('true'),
+  min: Joi.boolean().optional().default('false'),
+  max: Joi.boolean().optional().default('false')
+}, 'query'), SensorControllers.getTimeseriesV2)
+
+router.get('/state/:sensorId', Guard.userGuard, SensorControllers.getState)
+
 module.exports = router

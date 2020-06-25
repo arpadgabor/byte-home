@@ -27,6 +27,35 @@ const timeseries = async (sensorId, { from, to, step, avg = 'true', min, max, co
   return await query // run the query and return the result
 }
 
+const timeseriesV2 = async (sensorId, { start, finish, step, avg = 'true', min, max }) => {
+
+  // This is the base query
+  const query = Readings
+    .query()
+    .select(raw(`
+      time_bucket_gapfill(
+        ?, time,
+        start => ?,
+        finish => ?
+      )`, [step, start, finish]).as('datetime'))
+    .where('sensor', sensorId)
+    .whereBetween('time', [start, finish])
+    .groupBy('datetime')
+    .orderBy('datetime')
+
+  if (avg === 'true') query.avg('value')
+  if (min === 'true') query.min('value')
+  if (max === 'true') query.max('value')
+
+  return await query
+}
+
+const currentState = async (sensorId) => {
+  return await Readings.query().where('sensor', sensorId).orderBy('time', 'DESC').limit(1).first()
+}
+
 module.exports = {
   timeseries,
+  timeseriesV2,
+  currentState
 }

@@ -62,11 +62,6 @@ int write_uuid(char *uuid)
 	return 1;
 }
 
-void msg_data_handler(char *data)
-{
-	ESP_LOGI(TAG, "%s", data);
-}
-
 void cb_connection_ok(void *pvParameter)
 {
 	ESP_LOGE(TAG, "WIFI 1 CONNECTED!");

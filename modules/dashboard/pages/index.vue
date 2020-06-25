@@ -1,3 +1,35 @@
+<script>
+import dashboardHeader from '@/components/common/dashboard-header'
+import xButton from '@/components/common/forms/button'
+import sensor from '@/components/dashboard/sensor'
+import glance from '@/components/dashboard/glance'
+
+export default {
+  head() {
+    return {
+      title: 'Dashboard'
+    }
+  },
+  middleware: 'authenticated',
+  components: {
+    xButton,
+    dashboardHeader,
+    glance,
+    sensor
+  },
+  computed: {
+    households() {
+      return this.$store.state.auth.user.households
+    }
+  },
+  methods: {
+    openNewDeviceModal() {
+      this.$store.commit('modal/open', { name: 'new-device', title: 'Add a device' })
+    }
+  }
+}
+</script>
+
 <template>
   <main class="w-full">
     <dashboard-header>
@@ -5,7 +37,7 @@
         <h1 class="h1">Dashboard</h1>
       </template>
       <template v-slot:actions>
-        <x-button :variant="'secondary'" type="'button'">Layout</x-button>
+        <x-button :variant="'secondary'" type="'button'" @click.native="openNewDeviceModal"><span class="flex flex-row"><i class="gg-add mr-2"></i> New device</span></x-button>
       </template>
     </dashboard-header>
     <section>
@@ -39,32 +71,5 @@
     </section>
   </main>
 </template>
-
-<script>
-import dashboardHeader from '@/components/common/dashboard-header'
-import xButton from '@/components/common/forms/button'
-import sensor from '@/components/dashboard/sensor'
-import glance from '@/components/dashboard/glance'
-
-export default {
-  head() {
-    return {
-      title: 'Dashboard'
-    }
-  },
-  middleware: 'authenticated',
-  components: {
-    xButton,
-    dashboardHeader,
-    glance,
-    sensor
-  },
-  computed: {
-    households() {
-      return this.$store.state.auth.user.households
-    }
-  }
-}
-</script>
 
 <style></style>

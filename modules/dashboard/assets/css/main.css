@@ -3,6 +3,7 @@
 @import "./components/button.css";
 @import "./components/dialog.css";
 @import "./components/cards.css";
+@import "./components/icons.css";
 
 html, body {
   min-height: -webkit-fill-available;
