@@ -18,7 +18,7 @@ export default {
   plugins: [
     '@/plugins/http.server',
     '@/plugins/charts.client',
-
+    { src: '@/plugins/socket.client', ssr: false }
   ],
   middleware: ['authenticated'],
   buildModules: ['@nuxtjs/tailwindcss',],
@@ -40,7 +40,11 @@ export default {
     '/uploads/': {
       target: process.env.API_URL,
       // pathRewrite: { '^/uploads/': '' }
-    }
+    },
+    '/socket.io/': {
+      target: process.env.API_URL,
+      ws: true,
+    },
   },
   build: {
     vendor : [

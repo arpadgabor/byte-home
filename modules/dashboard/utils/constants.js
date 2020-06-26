@@ -17,7 +17,11 @@ export const api = {
     putHouseholdsDevice: householdId =>
       `api/households/${householdId}/device`,
 
-    getSensorsTimeseries: (sensorId, start, finish, step = 'hour', avg = true, min = true, max = true) =>
-      `api/sensors/timeseries/v2/${sensorId}?start=${start}&finish=${finish}&step=${step}&avg=${avg}&min=${min}&max=${max}`
+    getSensorsTimeseries: (sensorId, start, finish, step = '1 hour', avg = true, min = true, max = true) =>
+      `api/sensors/timeseries/v2/${sensorId}?start=${start}&finish=${finish}` +
+        `${step ? `&step=${step}` : ''}` +
+        `${avg ? `&avg=${avg}` : ''}` +
+        `${min ? `&min=${min}` : ''}` +
+        `${max ? `&max=${max}` : ''}`
   }
 }

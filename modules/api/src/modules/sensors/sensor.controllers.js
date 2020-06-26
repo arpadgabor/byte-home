@@ -18,8 +18,20 @@ const getState = async (ctx) => {
   ctx.send(Code.OK, state)
 }
 
+const getSensor = async (ctx) => {
+  const sensor = await SensorService.findById(ctx.params.sensorId)
+  ctx.send(Code.OK, sensor)
+}
+
+const updateSensor = async (ctx) => {
+  const updated = await SensorService.update(ctx.params.sensorId, ctx.request.body)
+  ctx.send(Code.OK, updated)
+}
+
 module.exports = {
   getTimeseries,
   getTimeseriesV2,
-  getState
+  getState,
+  getSensor,
+  updateSensor
 }

@@ -56,15 +56,16 @@ export default {
             v-for="device of house.devices"
             :key="device.id"
           >
-            <sensor
-              class="col-span-1"
-              v-for="sensor of device.sensors"
-              :key="sensor.id"
-              :id="sensor.id"
-              :name="sensor.name"
-              :type="sensor.type"
-              :unit="sensor.unit"
-            />
+            <div v-for="sensor of device.sensors" :key="sensor.id">
+              <sensor
+                class="col-span-1"
+                v-if="sensor.type !== 'bool'"
+                :id="sensor.id"
+                :name="sensor.name"
+                :type="sensor.type"
+                :unit="sensor.unit"
+              />
+            </div>
           </div>
         </div>
       </div>

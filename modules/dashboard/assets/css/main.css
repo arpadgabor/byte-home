@@ -4,6 +4,7 @@
 @import "./components/dialog.css";
 @import "./components/cards.css";
 @import "./components/icons.css";
+@import "./components/animations.css";
 
 html, body {
   min-height: -webkit-fill-available;

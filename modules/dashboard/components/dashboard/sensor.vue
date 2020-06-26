@@ -67,7 +67,7 @@ export default {
       ]
     },
 
-    async fetchTimeseries(finish, start = new Date(), step = '1 hour') {
+    async fetchTimeseries(finish, start = new Date(), step) {
 
       const url = api.private.getSensorsTimeseries(
         this.id, finish.toISOString(), start.toISOString(), step, this.modes.avg, this.modes.min, this.modes.max
@@ -85,7 +85,7 @@ export default {
       return series.map((val) => {
         return {
           x: new Date(val.datetime),
-          y: val[name]?.toFixed(1)
+          y: val[name] ? val[name].toFixed(1) : null
         }
       })
     },

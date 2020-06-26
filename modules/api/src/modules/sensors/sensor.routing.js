@@ -6,6 +6,11 @@ const SensorControllers = require('./sensor.controllers')
 
 const router = new Router({ prefix: '/sensors' })
 
+router.get('/:sensorId', Guard.userGuard, SensorControllers.getSensor)
+router.put('/:sensorId', Guard.userGuard, validate({
+  name: Joi.string().required()
+}), SensorControllers.updateSensor)
+
 router.get('/timeseries/:sensorId', Guard.userGuard, validate({
   from: Joi.date().required(),
   to: Joi.date().required(),
@@ -20,7 +25,7 @@ router.get('/timeseries/:sensorId', Guard.userGuard, validate({
 router.get('/timeseries/v2/:sensorId', Guard.userGuard, validate({
   start: Joi.date().required(),
   finish: Joi.date().required(),
-  step: Joi.string().required(),
+  step: Joi.string().optional(),
   avg: Joi.boolean().optional().default('true'),
   min: Joi.boolean().optional().default('false'),
   max: Joi.boolean().optional().default('false')

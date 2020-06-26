@@ -2,6 +2,8 @@ const Sensor = require('./sensor.models')
 const Readings = require('../readings/reading.models')
 const { raw } = require('objection')
 
+const findById = async (id) => await Sensor.query().findById(id)
+
 const timeseries = async (sensorId, { from, to, step, avg = 'true', min, max, compareBy, compareAt }) => {
 
   // This is the base query
@@ -29,23 +31,25 @@ const timeseries = async (sensorId, { from, to, step, avg = 'true', min, max, co
 
 const timeseriesV2 = async (sensorId, { start, finish, step, avg = 'true', min, max }) => {
 
-  // This is the base query
+  // acesta este query-ul de bază
   const query = Readings
     .query()
-    .select(raw(`
-      time_bucket_gapfill(
-        ?, time,
-        start => ?,
-        finish => ?
-      )`, [step, start, finish]).as('datetime'))
     .where('sensor', sensorId)
     .whereBetween('time', [start, finish])
-    .groupBy('datetime')
     .orderBy('datetime')
+
+  query.select(raw(`
+    time_bucket_gapfill(
+      ?, time,
+      start => ?,
+      finish => ?
+      )`, [step, start, finish]).as('datetime'))
+    .groupBy('datetime')
 
   if (avg === 'true') query.avg('value')
   if (min === 'true') query.min('value')
   if (max === 'true') query.max('value')
+
 
   return await query
 }
@@ -54,8 +58,13 @@ const currentState = async (sensorId) => {
   return await Readings.query().where('sensor', sensorId).orderBy('time', 'DESC').limit(1).first()
 }
 
+const update = async (id, updateObject) =>
+  await Sensor.query().updateAndFetchById(id, updateObject)
+
 module.exports = {
   timeseries,
   timeseriesV2,
-  currentState
+  currentState,
+  findById,
+  update
 }

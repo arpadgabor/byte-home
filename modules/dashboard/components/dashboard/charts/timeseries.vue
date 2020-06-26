@@ -22,7 +22,13 @@ export default {
         xaxis: {
           type: 'datetime',
           labels: {
-            show: true
+            show: true,
+            datetimeFormatter: {
+              year: 'yyyy',
+              month: "MMM 'yy",
+              day: 'dd MMM, HH:mm',
+              hour: 'HH:mm',
+            },
           },
           axisTicks: {
             show: false,
@@ -32,7 +38,7 @@ export default {
           labels: {
             show: true,
             formatter: (value) => {
-              return value + this.unit;
+              return value.toFixed(1) + this.unit;
             }
           }
         },

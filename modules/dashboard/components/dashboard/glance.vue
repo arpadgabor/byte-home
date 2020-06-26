@@ -1,9 +1,17 @@
 <script>
-export default {
-  asyncData() {
-    return {
+import glanceDoorSensor from '@/components/dashboard/devices/door-glance'
+import glanceMeasurement from '@/components/dashboard/devices/current-measurements-glance'
+import { listSensors } from '@/utils/helpers'
 
-    }
+export default {
+  components: {
+    glanceDoorSensor,
+    glanceMeasurement
+  },
+  computed: {
+    door() { return listSensors(this.$store.state.auth.user).find(s => s.type === 'bool') },
+    temp() { return listSensors(this.$store.state.auth.user).find(s => s.type === 'temperature') },
+    humid() { return listSensors(this.$store.state.auth.user).find(s => s.type === 'humidity') }
   }
 }
 </script>
@@ -14,15 +22,15 @@ export default {
       <h4 class="text-base m-0 leading-none text-gray-600">Households</h4>
       <h1 class="text-4xl m-0 leading-none font-bold text-primary-600">{{ $store.state.auth.user.households.length }}</h1>
     </nuxt-link>
-    <div id="nof-households" class="card default glance-item">
-
-    </div>
-    <div id="nof-households" class="card default glance-item">
-
-    </div>
-    <div id="nof-households" class="card default glance-item">
-
-    </div>
+    <nuxt-link :to="`/sensors/${door.id}`" id="door" class="card default glance-item">
+      <glance-door-sensor v-if="door" :sensor="door"></glance-door-sensor>
+    </nuxt-link>
+    <nuxt-link :to="`/sensors/${temp.id}`" id="temp" class="card default glance-item">
+      <glance-measurement v-if="temp" :sensor="temp"></glance-measurement>
+    </nuxt-link>
+    <nuxt-link :to="`/sensors/${humid.id}`" id="humid" class="card default glance-item">
+      <glance-measurement v-if="humid" :sensor="humid"></glance-measurement>
+    </nuxt-link>
   </section>
 </template>
 
