@@ -1,4 +1,5 @@
 const Devices = require('./device.models')
+const mqtt = require('../../plugins/mqtt/index')
 
 const find = async ({ key, value, op = '=' }, relation = '') =>
   await Devices.query().withGraphFetched(relation).where(key, op, value)
@@ -19,12 +20,25 @@ const updateByMac = async (mac, updateObject) =>
 
 const remove = async (id) => await Devices.query().deleteById(id)
 
+const updateOnlineStatus = async (deviceId, isOnline) => {
+  return await Devices.query().update({
+    isOnline: isOnline,
+    lastUpdate: new Date()
+  }).where('id', deviceId)
+}
+
+const pingDevice = async (deviceMac) => {
+  mqtt.client.publish(`devices/${deviceMac}/recv`, 'ping')
+}
+
 module.exports = {
   find,
+  updateOnlineStatus,
   findById,
   findByMac,
   create,
   remove,
   update,
   updateByMac,
+  pingDevice
 }

@@ -1,4 +1,4 @@
-set(COMPONENT_SRCS "main.cpp" "wifimesh.c" "device.c")
+set(COMPONENT_SRCS "main.c" "wifimesh.c" "device.c")
 
 set(COMPONENT_ADD_INCLUDEDIRS "")
 

@@ -12,6 +12,8 @@ typedef struct {
 	uint8_t *change_list;
 } node_list_t;
 
+TaskHandle_t xRebootHandler = NULL;
+
 static const char *TAG = "MESH";
 
 static bool addrs_remove(uint8_t *addrs_list, size_t *addrs_num, const uint8_t *addr)
@@ -30,19 +32,34 @@ static bool addrs_remove(uint8_t *addrs_list, size_t *addrs_num, const uint8_t *
 
 void msg_handler(char *msg)
 {
-	if(strstr(msg, "uuid") != NULL) {
-		// Save UUID of the device and restart
+	// Respond to ping messages
+	if(strstr(msg, "ping") != NULL) {
+		node_write_task("ping");
+
+	// Save UUID of the device and restart
+	} else if(strstr(msg, "uuid") != NULL) {
 		char buff[42];
 		strcpy(buff, msg);
-
 		strtok(msg, ":");
 		char *uuid = strtok(NULL, ":");
 
 		write_uuid(uuid);
 		esp_restart();
+
+	// If the message is anything else, implement custom handler
 	} else {
 		msg_data_handler(msg);
 	}
+}
+
+/// Waits 90 seconds before rebooting
+/// Task will not run if the device reconnects
+/// Check event_loop_cb: case MDF_EVENT_MWIFI_PARENT_CONNECTED
+void reboot_on_inactive(void *arg)
+{
+	ESP_LOGW(TAG, "Preparing to reboot - Disconnected.");
+	vTaskDelay(pdMS_TO_TICKS(90 * 1000));
+	esp_restart();
 }
 
 void root_write_task(void *arg)
@@ -213,26 +230,26 @@ static mdf_err_t wifi_init()
 
 }
 
-/**
- * @brief All module events will be sent to this task in esp-mdf
- *
- * @Note:
- *     1. Do not block or lengthy operations in the callback function.
- *     2. Do not consume a lot of memory in the callback function.
- *        The task memory of the callback function is only 4KB.
- */
 static mdf_err_t event_loop_cb(mdf_event_loop_t event, void *ctx)
 {
-	MDF_LOGI("event_loop_cb, event: %d", event);
 	static node_list_t node_list = {0x0};
+
+	MDF_LOGI("event_loop_cb, event: %d", event);
 
 	switch (event) {
 		case MDF_EVENT_MWIFI_STARTED:
 			MDF_LOGI("MESH is started");
+			
 			break;
 
 		case MDF_EVENT_MWIFI_PARENT_CONNECTED:
 			MDF_LOGI("ROOT is connected on station interface");
+
+			if( xRebootHandler != NULL ) {
+				ESP_LOGW(TAG, "Aborting reboot - Connected.");
+				vTaskDelete(xRebootHandler);
+			}
+
 			break;
 
 		case MDF_EVENT_MWIFI_PARENT_DISCONNECTED:
@@ -240,6 +257,9 @@ static mdf_err_t event_loop_cb(mdf_event_loop_t event, void *ctx)
 
 			if (esp_mesh_is_root()) {
 				mesh_mqtt_stop();
+			} else {
+				xTaskCreate(reboot_on_inactive, "reboot_inactive", 4 * 1024,
+						NULL, CONFIG_MDF_TASK_DEFAULT_PRIOTY, &xRebootHandler);
 			}
 			break;
 

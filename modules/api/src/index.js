@@ -9,7 +9,7 @@ const socket = require('./plugins/sockets')
 require('./lib/db')
 
 socket.start(app)
-mqtt(config.get('mqttUrl'))
+mqtt.connect(config.get('mqttUrl'))
 app.listen(config.get('port'), config.get('host'))
 
 log.warn('\nNODE', `Listening at http://${config.get('host')}:${config.get('port')}/`)

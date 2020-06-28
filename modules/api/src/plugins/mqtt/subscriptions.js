@@ -1,6 +1,7 @@
 const Devices = require('../../modules/devices/device.models')
 const Sensors = require('../../modules/sensors/sensor.models')
 const Readings = require('../../modules/readings/reading.models')
+const { updateOnlineStatus } = require('../../modules/devices/device.services')
 const io = require('../sockets')
 
 const onPing = (payload, mqtt) => {
@@ -31,10 +32,17 @@ const onReading = async (payload, mqtt) => {
     await registerDevice(payload, mqtt)
     return
   }
+  try {
+    const { updateOnlineStatus } = require('../../modules/devices/device.services')
+    await updateOnlineStatus(payload.uuid, true)
+  } catch (e) {
+    log.error('sub', e)
+  }
 
   const deviceSensors = await Sensors.query()
     .where('device', payload.uuid)
     .select('id', 'type')
+
 
   for (let sensor of deviceSensors) {
     try {

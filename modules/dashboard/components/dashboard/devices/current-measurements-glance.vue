@@ -5,6 +5,7 @@ export default {
     return {
       sensorValue: NaN,
       trend: 0,
+      lastRecording: undefined,
       flashing: false,
       error: null
     }
@@ -21,6 +22,7 @@ export default {
         here.flashing = true
         here.setTrend(here.sensorValue, data.value)
 
+        here.lastRecording = new Date(data.datetime).toLocaleString()
         here.sensorValue = data.value
       })
     },
@@ -36,6 +38,7 @@ export default {
         let response = await this.$http.$get(`api/sensors/state/${this.sensor.id}`, setAuthHeader(this.$store.state.auth.token))
 
         this.sensorValue = response.value
+        this.lastRecording = new Date(response.time).toLocaleString()
       } catch(err) {
         this.sensorValue = NaN
       }
@@ -48,7 +51,14 @@ export default {
   <div class="flex flex-row items-center h-full justify-between">
     <div class="h-full">
       <h4 class="text-base m-0 leading-none text-gray-600">{{ sensor.type }}</h4>
-      <h1 class="text-4xl m-0 leading-none font-bold text-primary-600" :class="{ 'text-glow': flashing }" @animationend="flashing = false">{{ sensorValue }}<sup class="text-base">{{sensor.unit}}</sup> </h1>
+      <h1
+        class="text-4xl m-0 leading-none font-bold text-primary-600"
+        :class="{ 'text-glow': flashing }"
+        @animationend="flashing = false"
+        :title="`Last recorded: ${lastRecording}`"
+      >
+        {{ sensorValue }}<sup class="text-base">{{sensor.unit}}</sup>
+      </h1>
     </div>
     <div class="h-full px-3">
       <span>
