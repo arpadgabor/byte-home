@@ -6,10 +6,6 @@ ByteHome is a solution for developing and deploying mesh-enabled embedded device
 
 ![website preview](https://i.imgur.com/TJ3zPza.png)
 
-## Architecture overview
-
-![architecture overview](https://i.imgur.com/tiOO7Jf.png)
-
 ## Technologies
 
 * Embedded: [ESP32](https://www.espressif.com/en/products/socs/esp32/overview), [Espressif Mesh Development Framework (ESP-MDF)](https://github.com/espressif/esp-mdf)
@@ -17,6 +13,10 @@ ByteHome is a solution for developing and deploying mesh-enabled embedded device
 * Backend: [Node.js](https://nodejs.org/en/)
 * Frontend: [Vue.js](https://vuejs.org/) w/ [Nuxt](https://nuxtjs.org/)
 * MQTT: [Eclipse Mosquitto](https://mosquitto.org/)
+
+### Architecture overview
+
+![architecture overview](https://i.imgur.com/tiOO7Jf.png)
 
 
 <!--
